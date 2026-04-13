@@ -308,7 +308,9 @@
         });
       });
 
-      $('#btn-logout').addEventListener('click', () => logout());
+      $('#btn-logout').addEventListener('click', () => {
+        if (confirm('Vuoi uscire dall\'app?')) logout();
+      });
       $('#btn-sync').addEventListener('click', async () => {
         toast('Sincronizzazione in corso...');
         try {
@@ -370,7 +372,8 @@
       const sunStr = dateStr(sunday);
 
       const { data: rawBookings } = await sb.from('bookings').select('*')
-        .or(`checkin_date.gte.${monStr},checkout_date.lte.${sunStr}`)
+        .lte('checkin_date', sunStr)
+        .gte('checkout_date', monStr)
         .order('checkin_date');
 
       const allBookings = dedup(rawBookings);
@@ -498,14 +501,14 @@
           <div class="payment-row">
             <div>
               <div class="fw-700">Maria</div>
-              <div class="payment-detail">Sett: ${mariaWeekHrs.toFixed(1)}h · Mese: ${mariaMonthHrs.toFixed(1)}h</div>
+              <div class="payment-detail">Sett: ${mariaWeekHrs.toFixed(1)} ore · Mese: ${mariaMonthHrs.toFixed(1)} ore</div>
             </div>
             <div class="payment-amount">${formatEuro(mariaMonthHrs * 15)}</div>
           </div>
           <div class="payment-row">
             <div>
               <div class="fw-700">Sara</div>
-              <div class="payment-detail">Sett: ${saraWeekInt} int. · Mese: ${saraMonthInt} int.</div>
+              <div class="payment-detail">Sett: ${saraWeekInt} interventi · Mese: ${saraMonthInt} interventi</div>
             </div>
             <div class="payment-amount">${formatEuro(saraMonthInt * 10)}</div>
           </div>
@@ -676,7 +679,7 @@
 
       // Build table rows, hiding zero-qty columns
       const allKeys = ['federe', 'lenzuola', 'asciugamani', 'tappeti', 'copripiumini'];
-      const keyLabels = { federe: 'Federe', lenzuola: 'Lenzuola', asciugamani: 'Asciug.', tappeti: 'Tappeti', copripiumini: 'Coprip.' };
+      const keyLabels = { federe: 'Federe', lenzuola: 'Lenzuola', asciugamani: 'Asciugamani', tappeti: 'Tappeti', copripiumini: 'Copripiumini' };
       const activeKeys = allKeys.filter(k => totAll[k] > 0);
 
       container.innerHTML = `
@@ -1252,7 +1255,9 @@
       const container = $('#staff-content');
       if (!container) return;
 
-      $('#btn-staff-logout')?.addEventListener('click', () => logout());
+      $('#btn-staff-logout')?.addEventListener('click', () => {
+        if (confirm('Vuoi uscire dall\'app?')) logout();
+      });
 
       const info = STAFF_MAP[userRole];
       if (!info) { container.innerHTML = '<div class="empty-state">Ruolo non riconosciuto</div>'; return; }
