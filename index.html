@@ -313,12 +313,24 @@
         toast('Sincronizzazione in corso...');
         try {
           const { data: { session } } = await sb.auth.getSession();
+          if (!session || !session.access_token) {
+            toast('Sessione scaduta. Effettua di nuovo il login.', 'error');
+            return;
+          }
           const res = await fetch(SUPABASE_URL + '/functions/v1/sync-lodgify', {
             method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + session.access_token }
+            headers: {
+              'Authorization': 'Bearer ' + session.access_token,
+              'Content-Type': 'application/json'
+            }
           });
-          if (!res.ok) throw new Error('Sync failed');
-          toast('Sync completata!', 'success');
+          const body = await res.json().catch(() => null);
+          if (!res.ok) {
+            const msg = body?.message || 'Errore ' + res.status;
+            throw new Error(msg);
+          }
+          const count = body?.synced || 0;
+          toast('Sync completata! ' + count + ' prenotazioni sincronizzate.', 'success');
           if (currentTab === 'dashboard') navigateTo('dashboard');
         } catch (e) {
           toast('Errore sync: ' + (e.message || 'Riprova'), 'error');
