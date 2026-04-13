@@ -1,2117 +1,1534 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Roma Segreta — Staff</title>
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700&display=swap" rel="stylesheet">
-<style>
-/* ═══════════════════════════════════════════
-   ROMA SEGRETA — Staff Management App
-   Palette: warm cream, beige, soft yellow
-   ═══════════════════════════════════════════ */
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #FFFDF8;
-  --surface: #FFF9F0;
-  --surface-2: #FFF5E6;
-  --surface-warm: #FFF0D9;
-  --border: #E8DFD0;
-  --border-light: #F0E8DB;
-  --text: #3D3428;
-  --text-muted: #8C7E6A;
-  --text-faint: #BDB0A0;
-  --accent: #C4973B;
-  --accent-hover: #A67E2E;
-  --accent-light: #F5E6C8;
-  --accent-bg: #FFF8ED;
-  --success: #5B8C3E;
-  --success-bg: #EFF5E8;
-  --success-light: #D4E8C2;
-  --error: #C4573B;
-  --error-bg: #FDF0EC;
-  --info: #4A7B8C;
-  --info-bg: #E8F2F5;
-  --priority-high: #C4573B;
-  --priority-med: #C4973B;
-  --priority-low: #5B8C3E;
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-full: 50%;
-
-  --shadow-sm: 0 1px 3px rgba(60, 50, 30, 0.04);
-  --shadow-md: 0 4px 16px rgba(60, 50, 30, 0.06);
-  --shadow-lg: 0 8px 32px rgba(60, 50, 30, 0.08);
-  --shadow-card: 0 2px 8px rgba(60, 50, 30, 0.05);
-
-  --font: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
-
-  --tab-height: 68px;
-  --header-height: 56px;
-}
-
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: 'kern' 1, 'liga' 1;
-}
-
-body {
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--text);
-  background: var(--bg);
-  min-height: 100dvh;
-  padding-bottom: calc(var(--tab-height) + 16px);
-  overflow-x: hidden;
-}
-
-/* ── HEADER ── */
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255, 253, 248, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-light);
-  height: var(--header-height);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-}
-
-.app-header h1 {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  color: var(--text);
-}
-
-.app-header h1 span {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-/* ── TAB BAR ── */
-.tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 200;
-  background: rgba(255, 253, 248, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border-light);
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  padding: 6px 0 max(env(safe-area-inset-bottom, 8px), 8px);
-  height: var(--tab-height);
-}
-
-.tab-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 8px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--text-faint);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  transition: color 0.2s ease, transform 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-  min-width: 56px;
-}
-
-.tab-item.active {
-  color: var(--accent);
-}
-
-.tab-item:active {
-  transform: scale(0.92);
-}
-
-.tab-item svg {
-  width: 24px;
-  height: 24px;
-  stroke-width: 1.8;
-}
-
-.tab-item .tab-badge {
-  position: absolute;
-  top: -2px;
-  right: -4px;
-  background: var(--error);
-  color: white;
-  font-size: 9px;
-  font-weight: 700;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-}
-
-.tab-item .icon-wrap {
-  position: relative;
-}
-
-/* ── PAGE CONTAINER ── */
-.page {
-  display: none;
-  padding: 16px 16px 24px;
-  max-width: 480px;
-  margin: 0 auto;
-  animation: fadeIn 0.25s ease;
-}
-
-.page.active { display: block; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── CARDS ── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: var(--shadow-card);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-/* ── KPI GRID ── */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.kpi-box {
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  box-shadow: var(--shadow-sm);
-}
-
-.kpi-box.wide {
-  grid-column: 1 / -1;
-}
-
-.kpi-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
-}
-
-.kpi-value {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-
-.kpi-value.money {
-  color: var(--accent);
-}
-
-.kpi-value.total {
-  font-size: 32px;
-  color: var(--accent);
-}
-
-.kpi-sub {
-  font-size: 12px;
-  color: var(--text-faint);
-  margin-top: 2px;
-}
-
-/* ── STAFF SECTION COLORED ── */
-.staff-section {
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 12px;
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-}
-
-.staff-section.maria {
-  background: linear-gradient(135deg, #FFF8ED, #FFF3DF);
-  border-color: #F0DFB8;
-}
-
-.staff-section.sara {
-  background: linear-gradient(135deg, #F0F7F2, #E8F2EB);
-  border-color: #C8DDD0;
-}
-
-.staff-name {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 2px;
-}
-
-.staff-role {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-
-.staff-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.staff-stat {
-  text-align: center;
-}
-
-.staff-stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-}
-
-.staff-stat-label {
-  font-size: 10px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.staff-pay {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(0,0,0,0.06);
-}
-
-.staff-pay-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.staff-pay-amount {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── SECTION HEADER ── */
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 14px;
-  color: var(--text);
-}
-
-.section-subtitle {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 10px;
-  margin-top: 20px;
-}
-
-/* ── HISTORY LIST ── */
-.history-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.history-item:last-child { border-bottom: none; }
-
-.history-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
-.history-dot.maria { background: var(--accent); }
-.history-dot.sara { background: var(--success); }
-
-.history-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.history-title {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.history-meta {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 1px;
-}
-
-.history-amount {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── UPCOMING CARD ── */
-.upcoming-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.upcoming-item:last-child { border-bottom: none; }
-
-.upcoming-date {
-  background: var(--accent-light);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  text-align: center;
-  min-width: 52px;
-  flex-shrink: 0;
-}
-
-.upcoming-day {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--accent);
-}
-
-.upcoming-month {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--accent-hover);
-  letter-spacing: 0.04em;
-}
-
-.upcoming-info { flex: 1; min-width: 0; }
-
-.upcoming-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.upcoming-detail {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.badge-checkin {
-  background: var(--success-bg);
-  color: var(--success);
-}
-
-.badge-checkout {
-  background: var(--error-bg);
-  color: var(--error);
-}
-
-.badge-priority-alta {
-  background: #FDECEC;
-  color: var(--priority-high);
-}
-
-.badge-priority-media {
-  background: #FFF5E0;
-  color: var(--priority-med);
-}
-
-.badge-priority-bassa {
-  background: var(--success-bg);
-  color: var(--priority-low);
-}
-
-/* ── TIMBRATURA PAGE ── */
-.clock-mode-switch {
-  display: flex;
-  gap: 0;
-  background: var(--surface-2);
-  border-radius: var(--radius-md);
-  padding: 4px;
-  margin-bottom: 20px;
-  border: 1px solid var(--border-light);
-}
-
-.clock-mode-btn {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  background: none;
-  font-family: var(--font);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-muted);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.clock-mode-btn.active {
-  background: white;
-  color: var(--text);
-  box-shadow: var(--shadow-sm);
-}
-
-.clock-panel {
-  display: none;
-  text-align: center;
-}
-
-.clock-panel.active { display: block; }
-
-.profile-avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  font-weight: 700;
-  color: white;
-  margin: 0 auto 8px;
-}
-
-.profile-avatar.maria-avatar {
-  background: linear-gradient(135deg, var(--accent), #D4A84A);
-}
-
-.profile-avatar.sara-avatar {
-  background: linear-gradient(135deg, var(--success), #7AAF5A);
-}
-
-.profile-name {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 2px;
-}
-
-.profile-rate {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 20px;
-}
-
-.clock-time {
-  font-size: 42px;
-  font-weight: 700;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  margin-bottom: 4px;
-  letter-spacing: -0.02em;
-}
-
-.clock-date {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-bottom: 24px;
-}
-
-.qr-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 6px 12px;
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 20px;
-}
-
-.qr-badge svg {
-  width: 16px;
-  height: 16px;
-}
-
-.clock-buttons {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 24px;
-  border: none;
-  border-radius: var(--radius-md);
-  font-family: var(--font);
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.btn:active { transform: scale(0.97); }
-
-.btn-entry {
-  flex: 1;
-  background: var(--success);
-  color: white;
-  min-height: 56px;
-  font-size: 15px;
-}
-
-.btn-entry:hover { background: #4E7B34; }
-
-.btn-exit {
-  flex: 1;
-  background: var(--error);
-  color: white;
-  min-height: 56px;
-  font-size: 15px;
-}
-
-.btn-exit:hover { background: #B04A30; }
-
-.btn-intervento {
-  width: 100%;
-  background: var(--success);
-  color: white;
-  min-height: 56px;
-  font-size: 15px;
-}
-
-.btn-intervento:hover { background: #4E7B34; }
-
-.btn-disabled {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.btn-sm {
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
-  min-height: auto;
-}
-
-.btn-accent {
-  background: var(--accent);
-  color: white;
-}
-
-.btn-accent:hover { background: var(--accent-hover); }
-
-.btn-outline {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.btn-outline:hover { background: var(--surface-2); }
-
-.note-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  font-family: var(--font);
-  font-size: 14px;
-  background: white;
-  color: var(--text);
-  margin-bottom: 16px;
-  transition: border-color 0.2s ease;
-}
-
-.note-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.note-input::placeholder {
-  color: var(--text-faint);
-}
-
-.shift-status {
-  background: var(--surface-warm);
-  border: 1px solid #F0DFB8;
-  border-radius: var(--radius-md);
-  padding: 14px;
-  margin-bottom: 16px;
-}
-
-.shift-status-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent-hover);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
-}
-
-.shift-status-time {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.recent-shifts {
-  margin-top: 20px;
-  text-align: left;
-}
-
-/* ── CALENDAR ── */
-.cal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.cal-header h2 {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.cal-nav {
-  display: flex;
-  gap: 8px;
-}
-
-.cal-nav-btn {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: white;
-  cursor: pointer;
-  color: var(--text);
-  transition: all 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.cal-nav-btn:hover { background: var(--surface-2); }
-
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  margin-bottom: 20px;
-}
-
-.cal-day-name {
-  text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 4px 0 8px;
-}
-
-.cal-day {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  position: relative;
-  cursor: default;
-}
-
-.cal-day.empty { visibility: hidden; }
-.cal-day.other-month { color: var(--text-faint); }
-
-.cal-day.today {
-  font-weight: 700;
-  background: var(--accent);
-  color: white;
-  border-radius: 50%;
-}
-
-.cal-day.occupied {
-  background: var(--accent-light);
-  color: var(--accent-hover);
-  font-weight: 600;
-}
-
-.cal-day.checkin {
-  background: var(--success-bg);
-  color: var(--success);
-  font-weight: 700;
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-}
-
-.cal-day.checkout {
-  background: var(--error-bg);
-  color: var(--error);
-  font-weight: 700;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-}
-
-.cal-day.checkin.checkout {
-  border-radius: var(--radius-sm);
-}
-
-.cal-legend {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.cal-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.cal-legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-}
-
-.cal-legend-dot.occ { background: var(--accent-light); }
-.cal-legend-dot.cin { background: var(--success-bg); border: 1px solid var(--success); }
-.cal-legend-dot.cout { background: var(--error-bg); border: 1px solid var(--error); }
-
-.booking-list .card {
-  padding: 14px;
-}
-
-.booking-guest {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 2px;
-}
-
-.booking-dates {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-
-.booking-guests-count {
-  font-size: 12px;
-  color: var(--text-faint);
-}
-
-/* ── LAVANDERIA ── */
-.laundry-summary {
-  background: linear-gradient(135deg, var(--surface-warm), #FFF5E6);
-  border: 1px solid #F0DFB8;
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.laundry-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.laundry-row:last-child { border-bottom: none; }
-
-.laundry-item-name {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.laundry-item-qty {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-.copy-box {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text);
-  white-space: pre-line;
-  margin-top: 12px;
-  position: relative;
-}
-
-.copy-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 6px 12px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.copy-btn:hover { background: var(--accent-hover); }
-
-.laundry-change-card {
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  margin-bottom: 10px;
-  box-shadow: var(--shadow-sm);
-}
-
-.laundry-change-date {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 2px;
-}
-
-.laundry-change-guest {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.laundry-change-detail {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-/* ── TO-DO ── */
-.todo-filters {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  margin-bottom: 16px;
-  padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.todo-filters::-webkit-scrollbar { display: none; }
-
-.filter-chip {
-  white-space: nowrap;
-  padding: 7px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  background: white;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-  flex-shrink: 0;
-}
-
-.filter-chip.active {
-  background: var(--accent);
-  color: white;
-  border-color: var(--accent);
-}
-
-.todo-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  margin-bottom: 8px;
-  box-shadow: var(--shadow-sm);
-  transition: opacity 0.2s ease;
-}
-
-.todo-item.completed {
-  opacity: 0.5;
-}
-
-.todo-check {
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--border);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  margin-top: 1px;
-  transition: all 0.15s ease;
-  background: white;
-}
-
-.todo-check.checked {
-  background: var(--success);
-  border-color: var(--success);
-}
-
-.todo-check.checked svg { stroke: white; }
-
-.todo-check svg {
-  width: 14px;
-  height: 14px;
-  stroke: transparent;
-  stroke-width: 2.5;
-}
-
-.todo-content { flex: 1; min-width: 0; }
-
-.todo-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.todo-item.completed .todo-title {
-  text-decoration: line-through;
-}
-
-.todo-meta {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.todo-category {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: var(--surface-2);
-  color: var(--text-muted);
-}
-
-.todo-reporter {
-  font-size: 11px;
-  color: var(--text-faint);
-}
-
-/* ── ADD TODO FORM ── */
-.add-todo-form {
-  display: none;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-md);
-}
-
-.add-todo-form.visible { display: block; }
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 6px;
-}
-
-.form-input,
-.form-select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-family: var(--font);
-  font-size: 14px;
-  background: white;
-  color: var(--text);
-  transition: border-color 0.15s ease;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.form-input:focus,
-.form-select:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.form-select {
-  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238C7E6A' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-}
-
-.form-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-/* ── TOAST ── */
-.toast {
-  position: fixed;
-  bottom: calc(var(--tab-height) + 16px);
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: var(--text);
-  color: white;
-  padding: 12px 20px;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 600;
-  z-index: 300;
-  opacity: 0;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ── COUNTER BADGE ── */
-.counter-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
-  border-radius: 11px;
-  font-size: 12px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.counter-badge.accent {
-  background: var(--accent-light);
-  color: var(--accent);
-}
-
-.counter-badge.error {
-  background: var(--error-bg);
-  color: var(--error);
-}
-
-/* ── UTILITY ── */
-.text-center { text-align: center; }
-.mt-8 { margin-top: 8px; }
-.mt-12 { margin-top: 12px; }
-.mt-16 { margin-top: 16px; }
-.mb-8 { margin-bottom: 8px; }
-.mb-12 { margin-bottom: 12px; }
-.mb-16 { margin-bottom: 16px; }
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Roma Segreta">
+  <meta name="theme-color" content="#B8860B">
+  <title>Roma Segreta</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
+  <div id="app"></div>
+  <div id="toast" class="toast"></div>
 
-<!-- ═══════ HEADER ═══════ -->
-<header class="app-header">
-  <h1>Roma <span>Segreta</span></h1>
-</header>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-<!-- ═══════ PAGES ═══════ -->
+  <script>
+  // ============================================================
+  // Roma Segreta v5 — Complete Rewrite
+  // ============================================================
+  (function() {
+    'use strict';
 
-<!-- DASHBOARD -->
-<div id="page-dashboard" class="page active">
-  <h2 class="section-title">Dashboard</h2>
+    // --- Config ---
+    const SUPABASE_URL = 'https://pijuymqrqtzolmpypovc.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpanV5bXFycXR6b2xtcHlwb3ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTgzNzIsImV4cCI6MjA5MTU5NDM3Mn0.bd0xDi_D7b5YtCXw05oWTdqQ9Vdf3OgGtLfawzEiO1w';
+    const ADMIN_EMAIL = 'inforomasegreta@gmail.com';
 
-  <!-- Maria -->
-  <div class="staff-section maria">
-    <div class="staff-name">Maria — Pulizie</div>
-    <div class="staff-role">15 €/ora · timbratura oraria</div>
-    <div class="staff-stats">
-      <div class="staff-stat">
-        <div class="staff-stat-value" id="maria-today-hours">0h</div>
-        <div class="staff-stat-label">Oggi</div>
-      </div>
-      <div class="staff-stat">
-        <div class="staff-stat-value" id="maria-week-hours">0h</div>
-        <div class="staff-stat-label">Settimana</div>
-      </div>
-      <div class="staff-stat">
-        <div class="staff-stat-value" id="maria-month-hours">0h</div>
-        <div class="staff-stat-label">Mese</div>
-      </div>
-    </div>
-    <div class="staff-pay">
-      <span class="staff-pay-label">Da pagare questo mese</span>
-      <span class="staff-pay-amount" id="maria-pay">€0</span>
-    </div>
-  </div>
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
 
-  <!-- Sara -->
-  <div class="staff-section sara">
-    <div class="staff-name">Sara — Manutenzione & Check-in</div>
-    <div class="staff-role">10 €/intervento</div>
-    <div class="staff-stats">
-      <div class="staff-stat">
-        <div class="staff-stat-value" id="sara-today">0</div>
-        <div class="staff-stat-label">Oggi</div>
-      </div>
-      <div class="staff-stat">
-        <div class="staff-stat-value" id="sara-week">0</div>
-        <div class="staff-stat-label">Settimana</div>
-      </div>
-      <div class="staff-stat">
-        <div class="staff-stat-value" id="sara-month">0</div>
-        <div class="staff-stat-label">Mese</div>
-      </div>
-    </div>
-    <div class="staff-pay">
-      <span class="staff-pay-label">Da pagare questo mese</span>
-      <span class="staff-pay-amount" id="sara-pay">€0</span>
-    </div>
-  </div>
+    // --- Staff Config ---
+    const STAFF_MAP = {
+      maria: { name: 'Maria', role: 'Pulizie', rate: 15, type: 'hourly', conversation: 'andrea_maria' },
+      sara:  { name: 'Sara',  role: 'Manutenzione / Check-in', rate: 10, type: 'per_job', conversation: 'andrea_sara' }
+    };
 
-  <!-- Totale Generale -->
-  <div class="kpi-grid">
-    <div class="kpi-box wide" style="background: linear-gradient(135deg, var(--accent-bg), var(--surface-warm)); border-color: #F0DFB8;">
-      <div class="kpi-label">Totale da pagare — Aprile</div>
-      <div class="kpi-value total" id="total-pay">€0</div>
-    </div>
-  </div>
+    // --- Linen Rules (exact lookup tables) ---
+    const LINEN = {
+      boutique: {
+        1: { federe: 2, lenzuola: 2, asciugamani: 1, tappeti: 1 },
+        2: { federe: 2, lenzuola: 2, asciugamani: 2, tappeti: 1 },
+        3: { federe: 4, lenzuola: 4, asciugamani: 3, tappeti: 1 },
+        4: { federe: 4, lenzuola: 4, asciugamani: 4, tappeti: 1 }
+      },
+      design: {
+        1: { federe: 2, lenzuola: 2, asciugamani: 1, tappeti: 2 },
+        2: { federe: 2, lenzuola: 2, asciugamani: 2, tappeti: 2 },
+        3: { federe: 4, lenzuola: 4, asciugamani: 3, tappeti: 2 },
+        4: { federe: 4, lenzuola: 4, asciugamani: 4, tappeti: 2 }
+      }
+    };
 
-  <!-- Ultimi turni -->
-  <div class="section-subtitle">Ultimi turni e interventi</div>
-  <div class="card" id="history-list" style="padding: 6px 16px;"></div>
+    // v5 prices (restored originals)
+    const PRICES = {
+      lenzuola: 2.50,
+      federe: 1.00,
+      asciugamani: 3.00,  // set asciugamani
+      tappeti: 1.50,
+      copripiumini: 4.00
+    };
 
-  <!-- Prossimi check-in/out -->
-  <div class="section-subtitle">Prossimi arrivi e partenze</div>
-  <div class="card" id="upcoming-list" style="padding: 6px 16px;"></div>
+    // --- State ---
+    let currentUser = null;
+    let userRole = null;
+    let currentTab = 'dashboard';
+    let staffSubTab = 'chat';     // 'chat', 'cassa', 'todo'
+    let chatTarget = null;
+    let propertiesMap = {};
 
-  <!-- Lavanderia riepilogo -->
-  <div class="section-subtitle">Prossimi cambi biancheria</div>
-  <div class="card" id="dash-laundry" style="padding: 6px 16px;"></div>
+    // --- Helpers ---
+    const $ = (sel, ctx) => (ctx || document).querySelector(sel);
+    const $$ = (sel, ctx) => [...(ctx || document).querySelectorAll(sel)];
 
-  <!-- To-do aperti -->
-  <div class="flex-between mt-16 mb-8">
-    <span class="section-subtitle" style="margin: 0;">To-do aperti</span>
-    <span class="counter-badge error" id="todo-badge">0</span>
-  </div>
-  <div id="dash-todos"></div>
-</div>
-
-<!-- TIMBRATURA -->
-<div id="page-timbratura" class="page">
-  <h2 class="section-title">Timbratura & Interventi</h2>
-
-  <div class="clock-mode-switch">
-    <button class="clock-mode-btn active" data-mode="pulizie" onclick="switchClockMode('pulizie')">Pulizie (Maria)</button>
-    <button class="clock-mode-btn" data-mode="interventi" onclick="switchClockMode('interventi')">Interventi (Sara)</button>
-  </div>
-
-  <!-- Maria Clock Panel -->
-  <div id="panel-pulizie" class="clock-panel active">
-    <div class="profile-avatar maria-avatar">M</div>
-    <div class="profile-name">Maria</div>
-    <div class="profile-rate">Pulizie · 15 €/ora</div>
-
-    <div class="qr-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><path d="M20 14h1v3h-3"/><path d="M14 20h3v1"/><path d="M20 20h1v1"/></svg>
-      QR Appartamento verificato
-    </div>
-
-    <div class="clock-time" id="clock-display">00:00</div>
-    <div class="clock-date" id="clock-date-display">--</div>
-
-    <div id="shift-status-box" class="shift-status" style="display:none;">
-      <div class="shift-status-label">Turno in corso</div>
-      <div class="shift-status-time" id="shift-start-display">--</div>
-    </div>
-
-    <div class="clock-buttons">
-      <button class="btn btn-entry" id="btn-entry" onclick="clockEntry()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
-        Entrata
-      </button>
-      <button class="btn btn-exit btn-disabled" id="btn-exit" onclick="clockExit()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        Uscita
-      </button>
-    </div>
-
-    <div class="recent-shifts">
-      <div class="section-subtitle" style="margin-top: 0;">Turni recenti</div>
-      <div id="recent-maria-shifts"></div>
-    </div>
-  </div>
-
-  <!-- Sara Intervention Panel -->
-  <div id="panel-interventi" class="clock-panel">
-    <div class="profile-avatar sara-avatar">S</div>
-    <div class="profile-name">Sara</div>
-    <div class="profile-rate">Manutenzione & Check-in · 10 €/intervento</div>
-
-    <div class="clock-time" id="clock-display-2">00:00</div>
-    <div class="clock-date" id="clock-date-display-2">--</div>
-
-    <input type="text" class="note-input" id="intervention-note" placeholder="Nota intervento (opzionale)..." maxlength="120">
-
-    <button class="btn btn-intervento" onclick="registerIntervention()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-      Registra Intervento
-    </button>
-
-    <div class="recent-shifts mt-16">
-      <div class="section-subtitle" style="margin-top: 0;">Interventi recenti</div>
-      <div id="recent-sara-interventions"></div>
-    </div>
-  </div>
-</div>
-
-<!-- CALENDARIO -->
-<div id="page-calendario" class="page">
-  <div class="cal-header">
-    <h2 id="cal-month-title">Aprile 2026</h2>
-    <div class="cal-nav">
-      <button class="cal-nav-btn" onclick="changeMonth(-1)">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button class="cal-nav-btn" onclick="changeMonth(1)">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <div class="cal-legend">
-    <div class="cal-legend-item"><div class="cal-legend-dot occ"></div>Occupato</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot cin"></div>Check-in</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot cout"></div>Check-out</div>
-  </div>
-
-  <div class="cal-grid" id="cal-grid"></div>
-
-  <div class="section-subtitle">Prenotazioni del mese</div>
-  <div class="booking-list" id="booking-list"></div>
-</div>
-
-<!-- LAVANDERIA -->
-<div id="page-lavanderia" class="page">
-  <h2 class="section-title">Lavanderia</h2>
-
-  <div class="section-subtitle" style="margin-top: 4px;">Prossimi cambi</div>
-  <div id="laundry-changes"></div>
-
-  <div class="section-subtitle">Riepilogo settimana</div>
-  <div class="laundry-summary" id="laundry-summary"></div>
-
-  <div class="section-subtitle">Testo per la lavanderia</div>
-  <div class="copy-box" id="laundry-text">
-    <button class="copy-btn" onclick="copyLaundryText()">Copia</button>
-  </div>
-</div>
-
-<!-- TO-DO -->
-<div id="page-todo" class="page">
-  <div class="flex-between mb-12">
-    <h2 class="section-title" style="margin-bottom: 0;">To-Do Casa</h2>
-    <button class="btn btn-sm btn-accent" onclick="toggleAddTodo()">+ Aggiungi</button>
-  </div>
-
-  <div id="add-todo-form" class="add-todo-form">
-    <div class="form-group">
-      <label class="form-label">Titolo</label>
-      <input type="text" class="form-input" id="todo-new-title" placeholder="Cosa va fatto...">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Categoria</label>
-      <select class="form-select" id="todo-new-category">
-        <option value="Da comprare">Da comprare</option>
-        <option value="Da riparare">Da riparare</option>
-        <option value="Da controllare">Da controllare</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Priorità</label>
-      <select class="form-select" id="todo-new-priority">
-        <option value="alta">Alta</option>
-        <option value="media">Media</option>
-        <option value="bassa">Bassa</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Segnalato da</label>
-      <input type="text" class="form-input" id="todo-new-reporter" placeholder="es. Maria, Sara, Andrea...">
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-sm btn-accent" style="flex:1" onclick="addNewTodo()">Salva</button>
-      <button class="btn btn-sm btn-outline" style="flex:1" onclick="toggleAddTodo()">Annulla</button>
-    </div>
-  </div>
-
-  <div class="todo-filters" id="todo-filters">
-    <button class="filter-chip active" data-filter="tutti" onclick="filterTodos('tutti')">Tutti</button>
-    <button class="filter-chip" data-filter="Da comprare" onclick="filterTodos('Da comprare')">Da comprare</button>
-    <button class="filter-chip" data-filter="Da riparare" onclick="filterTodos('Da riparare')">Da riparare</button>
-    <button class="filter-chip" data-filter="Da controllare" onclick="filterTodos('Da controllare')">Da controllare</button>
-  </div>
-
-  <div id="todo-list"></div>
-</div>
-
-<!-- TAB BAR -->
-<nav class="tab-bar">
-  <button class="tab-item active" data-page="dashboard" onclick="switchPage('dashboard')">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    </div>
-    Home
-  </button>
-  <button class="tab-item" data-page="timbratura" onclick="switchPage('timbratura')">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    </div>
-    Timbra
-  </button>
-  <button class="tab-item" data-page="calendario" onclick="switchPage('calendario')">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    </div>
-    Calendario
-  </button>
-  <button class="tab-item" data-page="lavanderia" onclick="switchPage('lavanderia')">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l3 1 1-3"/><path d="M21 6l-3 1-1-3"/><path d="M12 2a10 10 0 00-7.7 16.3L6 22l2-2h8l2 2 1.7-3.7A10 10 0 0012 2z"/><path d="M9 13a3 3 0 006 0"/></svg>
-    </div>
-    Biancheria
-  </button>
-  <button class="tab-item" data-page="todo" onclick="switchPage('todo')">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-      <span class="tab-badge" id="tab-todo-badge" style="display:none;">0</span>
-    </div>
-    To-Do
-  </button>
-</nav>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-/* ═══════════════════════════════════════════
-   DATA — Simulated realistic data
-   ═══════════════════════════════════════════ */
-
-const TODAY = new Date(2026, 3, 12, 19, 24); // April 12, 2026
-
-const MONTHS_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-const DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-
-// Helper
-function fmt(d) {
-  return d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0');
-}
-function fmtTime(d) {
-  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-}
-function fmtFull(d) {
-  return DAYS_SHORT[(d.getDay()+6)%7] + ' ' + d.getDate() + ' ' + MONTHS_IT[d.getMonth()];
-}
-function sameDay(a, b) { return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
-function startOfWeek(d) {
-  const r = new Date(d); const day = (r.getDay()+6)%7;
-  r.setDate(r.getDate() - day); r.setHours(0,0,0,0); return r;
-}
-function startOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
-function isInRange(date, start, end) { return date >= start && date < end; }
-
-// Bookings — realistic Roman names and dates for April-May 2026
-const bookings = [
-  { guest: 'Müller Thomas', guests: 2, checkin: new Date(2026,3,3), checkout: new Date(2026,3,7) },
-  { guest: 'Laurent Sophie', guests: 3, checkin: new Date(2026,3,8), checkout: new Date(2026,3,13) },
-  { guest: 'Bianchi Marco', guests: 2, checkin: new Date(2026,3,14), checkout: new Date(2026,3,18) },
-  { guest: 'Williams Emma', guests: 4, checkin: new Date(2026,3,19), checkout: new Date(2026,3,24) },
-  { guest: 'Rossi Giulia', guests: 2, checkin: new Date(2026,3,25), checkout: new Date(2026,3,29) },
-  { guest: 'Schneider Anna', guests: 3, checkin: new Date(2026,4,1), checkout: new Date(2026,4,6) },
-  { guest: 'García Pablo', guests: 2, checkin: new Date(2026,4,8), checkout: new Date(2026,4,12) },
-  { guest: 'Dubois Claire', guests: 2, checkin: new Date(2026,4,14), checkout: new Date(2026,4,18) },
-];
-
-// Maria shifts (clock in/out) — realistic past data
-let mariaShifts = [
-  { entry: new Date(2026,3,5,9,0), exit: new Date(2026,3,5,12,30) },
-  { entry: new Date(2026,3,7,8,30), exit: new Date(2026,3,7,11,0) },
-  { entry: new Date(2026,3,8,9,0), exit: new Date(2026,3,8,12,0) },
-  { entry: new Date(2026,3,9,9,15), exit: new Date(2026,3,9,11,45) },
-  { entry: new Date(2026,3,10,8,45), exit: new Date(2026,3,10,12,15) },
-  { entry: new Date(2026,3,11,9,0), exit: new Date(2026,3,11,11,30) },
-  { entry: new Date(2026,3,12,9,0), exit: new Date(2026,3,12,12,0) },
-];
-
-// Active shift state
-let activeShift = null;
-
-// Sara interventions
-let saraInterventions = [
-  { date: new Date(2026,3,3,14,0), note: 'Check-in Müller — consegna chiavi' },
-  { date: new Date(2026,3,7,10,30), note: 'Check-out Müller — verifica appartamento' },
-  { date: new Date(2026,3,8,15,0), note: 'Check-in Laurent — orientamento zona' },
-  { date: new Date(2026,3,9,11,0), note: 'Riparazione scarico doccia' },
-  { date: new Date(2026,3,10,16,0), note: 'Sostituzione lampadina ingresso' },
-  { date: new Date(2026,3,12,9,30), note: 'Controllo termosifoni salone' },
-];
-
-// To-do list
-let todos = [
-  { id: 1, title: 'Comprare shampoo e balsamo', category: 'Da comprare', priority: 'alta', done: false, date: new Date(2026,3,10), reporter: 'Maria' },
-  { id: 2, title: 'Carta igienica (scorta)', category: 'Da comprare', priority: 'alta', done: false, date: new Date(2026,3,11), reporter: 'Maria' },
-  { id: 3, title: 'Lampadina fulminata — camera da letto', category: 'Da riparare', priority: 'media', done: false, date: new Date(2026,3,9), reporter: 'Sara' },
-  { id: 4, title: 'Bicchiere rotto — servizio cucina', category: 'Da comprare', priority: 'bassa', done: false, date: new Date(2026,3,8), reporter: 'Sara' },
-  { id: 5, title: 'Serratura portone da controllare', category: 'Da controllare', priority: 'alta', done: false, date: new Date(2026,3,7), reporter: 'Andrea' },
-  { id: 6, title: 'Detersivo pavimenti quasi finito', category: 'Da comprare', priority: 'media', done: false, date: new Date(2026,3,12), reporter: 'Maria' },
-];
-
-let todoIdCounter = 7;
-let currentFilter = 'tutti';
-
-/* ═══════════════════════════════════════════
-   NAVIGATION
-   ═══════════════════════════════════════════ */
-
-function switchPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.tab-item[data-page="${name}"]`).classList.add('active');
-  window.scrollTo(0, 0);
-
-  if (name === 'dashboard') renderDashboard();
-  if (name === 'timbratura') updateClock();
-  if (name === 'calendario') renderCalendar();
-  if (name === 'lavanderia') renderLaundry();
-  if (name === 'todo') renderTodos();
-}
-
-/* ═══════════════════════════════════════════
-   DASHBOARD
-   ═══════════════════════════════════════════ */
-
-function calcMariaHours(period) {
-  const now = TODAY;
-  let start;
-  if (period === 'today') { start = new Date(now.getFullYear(), now.getMonth(), now.getDate()); }
-  else if (period === 'week') { start = startOfWeek(now); }
-  else { start = startOfMonth(now); }
-  const end = new Date(now.getTime() + 86400000);
-
-  let total = 0;
-  mariaShifts.forEach(s => {
-    if (s.exit && s.entry >= start && s.entry < end) {
-      total += (s.exit - s.entry) / 3600000;
+    function toast(msg, type) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast' + (type ? ' ' + type : '');
+      requestAnimationFrame(() => el.classList.add('visible'));
+      setTimeout(() => el.classList.remove('visible'), 2500);
     }
-  });
-  return total;
-}
 
-function calcSaraCount(period) {
-  const now = TODAY;
-  let start;
-  if (period === 'today') { start = new Date(now.getFullYear(), now.getMonth(), now.getDate()); }
-  else if (period === 'week') { start = startOfWeek(now); }
-  else { start = startOfMonth(now); }
-  const end = new Date(now.getTime() + 86400000);
+    function formatDate(d) {
+      if (!d) return '-';
+      return new Date(d).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+    }
 
-  return saraInterventions.filter(i => i.date >= start && i.date < end).length;
-}
+    function formatDateTime(d) {
+      if (!d) return '-';
+      return new Date(d).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    }
 
-function renderDashboard() {
-  const mToday = calcMariaHours('today');
-  const mWeek = calcMariaHours('week');
-  const mMonth = calcMariaHours('month');
-  const mariaPay = Math.round(mMonth * 15);
+    function formatTime(d) {
+      if (!d) return '-';
+      return new Date(d).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    }
 
-  document.getElementById('maria-today-hours').textContent = mToday.toFixed(1) + 'h';
-  document.getElementById('maria-week-hours').textContent = mWeek.toFixed(1) + 'h';
-  document.getElementById('maria-month-hours').textContent = mMonth.toFixed(1) + 'h';
-  document.getElementById('maria-pay').textContent = '€' + mariaPay;
+    function formatEuro(n) {
+      return '€' + Number(n || 0).toFixed(2).replace('.', ',');
+    }
 
-  const sToday = calcSaraCount('today');
-  const sWeek = calcSaraCount('week');
-  const sMonth = calcSaraCount('month');
-  const saraPay = sMonth * 10;
+    function getMonday(d) {
+      const dt = new Date(d);
+      const day = dt.getDay();
+      const diff = dt.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(dt.setDate(diff));
+    }
 
-  document.getElementById('sara-today').textContent = sToday;
-  document.getElementById('sara-week').textContent = sWeek;
-  document.getElementById('sara-month').textContent = sMonth;
-  document.getElementById('sara-pay').textContent = '€' + saraPay;
+    function getSunday(d) {
+      const mon = getMonday(d);
+      return new Date(mon.getTime() + 6 * 86400000);
+    }
 
-  document.getElementById('total-pay').textContent = '€' + (mariaPay + saraPay);
+    function dateStr(d) { return d.toISOString().split('T')[0]; }
 
-  // History
-  const allEvents = [];
-  mariaShifts.forEach(s => {
-    if (s.exit) {
-      const hrs = ((s.exit - s.entry) / 3600000).toFixed(1);
-      allEvents.push({
-        date: s.entry,
-        type: 'maria',
-        title: 'Maria — Pulizie',
-        meta: fmt(s.entry) + ' · ' + fmtTime(s.entry) + '–' + fmtTime(s.exit) + ' (' + hrs + 'h)',
-        amount: '€' + Math.round(hrs * 15)
+    function needsCopripiumino(checkinDate) {
+      const d = new Date(checkinDate);
+      const m = d.getMonth();
+      const day = d.getDate();
+      if (m >= 0 && m <= 2) return true;
+      if (m >= 10) return true;
+      if (m === 9 && day >= 11) return true;
+      return false;
+    }
+
+    function getLinenForBooking(aptName, numGuests, checkinDate) {
+      const key = aptName.toLowerCase();
+      const table = LINEN[key];
+      const g = Math.min(Math.max(numGuests || 1, 1), 4);
+      const items = table ? { ...table[g] } : { federe: 0, lenzuola: 0, asciugamani: 0, tappeti: 0 };
+      items.copripiumini = needsCopripiumino(checkinDate) ? (items.lenzuola / 2) : 0;
+      return items;
+    }
+
+    function getWeekLabel(mon, sun) {
+      const mStr = mon.toLocaleDateString('it-IT', { day: 'numeric' });
+      const sStr = sun.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+      return mStr + '-' + sStr.charAt(0).toUpperCase() + sStr.slice(1);
+    }
+
+    function dedup(bookings) {
+      return [...new Map((bookings || []).map(b => [b.lodgify_booking_id || b.id, b])).values()];
+    }
+
+    // --- Supabase Helpers ---
+    async function getProperties() {
+      const { data } = await sb.from('properties').select('id, name');
+      propertiesMap = {};
+      (data || []).forEach(p => { propertiesMap[p.id] = p.name; });
+      return propertiesMap;
+    }
+
+    function getAptName(propertyId) {
+      const name = propertiesMap[propertyId] || '';
+      if (name.toLowerCase().includes('design')) return 'Design';
+      if (name.toLowerCase().includes('boutique')) return 'Boutique';
+      return name || 'Sconosciuto';
+    }
+
+    // --- Auth ---
+    async function checkSession() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.user) {
+        currentUser = session.user;
+        determineRole();
+        return true;
+      }
+      return false;
+    }
+
+    function determineRole() {
+      if (!currentUser) { userRole = null; return; }
+      const email = currentUser.email?.toLowerCase() || '';
+      if (email === ADMIN_EMAIL) userRole = 'admin';
+      else if (email.includes('maria')) userRole = 'maria';
+      else if (email.includes('sara')) userRole = 'sara';
+      else userRole = 'admin';
+    }
+
+    async function login(email, password) {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      currentUser = data.user;
+      determineRole();
+    }
+
+    async function logout() {
+      await sb.auth.signOut();
+      currentUser = null;
+      userRole = null;
+      render();
+    }
+
+    // ============================================================
+    // RENDERING
+    // ============================================================
+    function render() {
+      const app = document.getElementById('app');
+      if (!currentUser) {
+        app.innerHTML = renderLogin();
+        bindLogin();
+      } else if (userRole === 'admin') {
+        app.innerHTML = renderAdminShell();
+        bindAdminShell();
+        navigateTo(currentTab);
+      } else {
+        app.innerHTML = renderStaffShell();
+        bindStaffView();
+      }
+    }
+
+    // --- Login ---
+    function renderLogin() {
+      return `
+        <div class="login-screen">
+          <div class="login-card">
+            <img src="icons/icon-192.png" class="login-logo" alt="Roma Segreta">
+            <div class="login-title">Roma Segreta</div>
+            <div class="login-subtitle">Gestione Staff</div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" id="login-email" class="form-input" placeholder="tua@email.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" id="login-password" class="form-input" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <button id="login-btn" class="btn-primary">Accedi</button>
+            <div id="login-error" class="login-error"></div>
+          </div>
+        </div>`;
+    }
+
+    function bindLogin() {
+      const btn = $('#login-btn');
+      const errEl = $('#login-error');
+      btn.addEventListener('click', async () => {
+        const email = $('#login-email').value.trim();
+        const pwd = $('#login-password').value;
+        if (!email || !pwd) { errEl.textContent = 'Inserisci email e password'; errEl.classList.add('visible'); return; }
+        btn.disabled = true;
+        btn.textContent = 'Accesso...';
+        try {
+          await login(email, pwd);
+          render();
+        } catch (e) {
+          errEl.textContent = 'Credenziali non valide';
+          errEl.classList.add('visible');
+          btn.disabled = false;
+          btn.textContent = 'Accedi';
+        }
+      });
+      $('#login-password').addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
+    }
+
+    // --- Admin Shell (4 tabs) ---
+    function renderAdminShell() {
+      return `
+        <header class="app-header">
+          <div class="logo">
+            <img src="icons/icon-192.png" alt="">
+            Roma Segreta
+          </div>
+          <div class="header-actions">
+            <button class="header-btn" id="btn-sync" title="Sync Lodgify">🔄</button>
+            <button class="header-btn" id="btn-logout" title="Esci">🚪</button>
+          </div>
+        </header>
+        <div class="main-content" id="page-content"></div>
+        <nav class="tab-bar">
+          <button class="tab-item active" data-tab="dashboard">
+            <span class="tab-icon">🏠</span>
+            Dashboard
+          </button>
+          <button class="tab-item" data-tab="lavanderia">
+            <span class="tab-icon">👕</span>
+            Lavanderia
+          </button>
+          <button class="tab-item" data-tab="staff">
+            <span class="tab-icon">👥</span>
+            Staff
+          </button>
+          <button class="tab-item" data-tab="chat_gruppo">
+            <span class="tab-icon">💬</span>
+            Chat
+          </button>
+        </nav>`;
+    }
+
+    function bindAdminShell() {
+      $$('.tab-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentTab = btn.dataset.tab;
+          $$('.tab-item').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          navigateTo(currentTab);
+        });
+      });
+
+      $('#btn-logout').addEventListener('click', () => logout());
+      $('#btn-sync').addEventListener('click', async () => {
+        toast('Sincronizzazione in corso...');
+        try {
+          const { data: { session } } = await sb.auth.getSession();
+          const res = await fetch(SUPABASE_URL + '/functions/v1/sync-lodgify', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + session.access_token }
+          });
+          if (!res.ok) throw new Error('Sync failed');
+          toast('Sync completata!', 'success');
+          if (currentTab === 'dashboard') navigateTo('dashboard');
+        } catch (e) {
+          toast('Errore sync: ' + (e.message || 'Riprova'), 'error');
+        }
       });
     }
-  });
-  saraInterventions.forEach(i => {
-    allEvents.push({
-      date: i.date,
-      type: 'sara',
-      title: 'Sara — ' + (i.note.length > 30 ? i.note.substring(0,30) + '...' : i.note),
-      meta: fmt(i.date) + ' · ' + fmtTime(i.date),
-      amount: '€10'
-    });
-  });
-  allEvents.sort((a,b) => b.date - a.date);
 
-  const historyHTML = allEvents.slice(0, 6).map(e => `
-    <div class="history-item">
-      <div class="history-dot ${e.type}"></div>
-      <div class="history-info">
-        <div class="history-title">${e.title}</div>
-        <div class="history-meta">${e.meta}</div>
-      </div>
-      <div class="history-amount">${e.amount}</div>
-    </div>
-  `).join('');
-  document.getElementById('history-list').innerHTML = historyHTML;
-
-  // Upcoming
-  const upcoming = [];
-  bookings.forEach(b => {
-    if (b.checkin >= new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate())) {
-      upcoming.push({ date: b.checkin, type: 'checkin', guest: b.guest, guests: b.guests });
+    async function navigateTo(tab) {
+      const content = $('#page-content');
+      if (!content) return;
+      content.innerHTML = '<div class="loading">Caricamento...</div>';
+      try {
+        switch (tab) {
+          case 'dashboard': await renderDashboard(content); break;
+          case 'lavanderia': await renderLavanderia(content); break;
+          case 'staff':
+            if (chatTarget) { await renderPrivateChat(content); }
+            else { await renderStaffPage(content); }
+            break;
+          case 'chat_gruppo': await renderGroupChat(content); break;
+        }
+      } catch (err) {
+        console.error('Page error:', err);
+        content.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Errore nel caricamento</div></div>';
+      }
     }
-    if (b.checkout >= new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate())) {
-      upcoming.push({ date: b.checkout, type: 'checkout', guest: b.guest, guests: b.guests });
-    }
-  });
-  upcoming.sort((a,b) => a.date - b.date);
 
-  const upHTML = upcoming.slice(0, 4).map(u => `
-    <div class="upcoming-item">
-      <div class="upcoming-date">
-        <div class="upcoming-day">${u.date.getDate()}</div>
-        <div class="upcoming-month">${MONTHS_IT[u.date.getMonth()].substring(0,3)}</div>
-      </div>
-      <div class="upcoming-info">
-        <div class="upcoming-name">${u.guest}</div>
-        <div class="upcoming-detail">${u.guests} ospiti</div>
-      </div>
-      <span class="badge badge-${u.type === 'checkin' ? 'checkin' : 'checkout'}">${u.type === 'checkin' ? 'Check-in' : 'Check-out'}</span>
-    </div>
-  `).join('');
-  document.getElementById('upcoming-list').innerHTML = upHTML;
+    // ============================================================
+    // DASHBOARD (ADMIN)
+    // ============================================================
+    async function renderDashboard(container) {
+      await getProperties();
+      const now = new Date();
+      const monday = getMonday(now);
+      const sunday = getSunday(now);
+      const monStr = dateStr(monday);
+      const sunStr = dateStr(sunday);
 
-  // Laundry summary on dashboard
-  const nextChanges = getNextLaundryChanges().slice(0, 2);
-  const dashLaundryHTML = nextChanges.map(c => `
-    <div class="upcoming-item">
-      <div class="upcoming-date">
-        <div class="upcoming-day">${c.date.getDate()}</div>
-        <div class="upcoming-month">${MONTHS_IT[c.date.getMonth()].substring(0,3)}</div>
-      </div>
-      <div class="upcoming-info">
-        <div class="upcoming-name">${c.guest}</div>
-        <div class="upcoming-detail">${c.sheets} lenzuola · ${c.towels} asciugamani</div>
-      </div>
-    </div>
-  `).join('') || '<div style="padding:12px;color:var(--text-faint);font-size:13px;">Nessun cambio previsto</div>';
-  document.getElementById('dash-laundry').innerHTML = dashLaundryHTML;
+      const { data: rawBookings } = await sb.from('bookings').select('*')
+        .or(`checkin_date.gte.${monStr},checkout_date.lte.${sunStr}`)
+        .order('checkin_date');
 
-  // Todo badge
-  const openTodos = todos.filter(t => !t.done).length;
-  document.getElementById('todo-badge').textContent = openTodos;
-  const tabBadge = document.getElementById('tab-todo-badge');
-  tabBadge.textContent = openTodos;
-  tabBadge.style.display = openTodos > 0 ? 'flex' : 'none';
+      const allBookings = dedup(rawBookings);
+      const arrivals = allBookings.filter(b => b.checkin_date >= monStr && b.checkin_date <= sunStr);
+      const departures = allBookings.filter(b => b.checkout_date >= monStr && b.checkout_date <= sunStr);
 
-  // Top 3 open todos
-  const topTodos = todos.filter(t => !t.done).sort((a,b) => {
-    const p = {alta:0, media:1, bassa:2};
-    return p[a.priority] - p[b.priority];
-  }).slice(0, 3);
+      const totalNights = 7 * 2;
+      let occupiedNights = 0;
+      allBookings.forEach(b => {
+        const ci = new Date(Math.max(new Date(b.checkin_date), monday));
+        const co = new Date(Math.min(new Date(b.checkout_date), new Date(sunday.getTime() + 86400000)));
+        occupiedNights += Math.max(0, Math.round((co - ci) / 86400000));
+      });
+      occupiedNights = Math.min(occupiedNights, totalNights);
+      const occupancy = totalNights > 0 ? Math.round((occupiedNights / totalNights) * 100) : 0;
 
-  const todosHTML = topTodos.map(t => `
-    <div class="todo-item" style="margin-bottom:8px;">
-      <div class="todo-content">
-        <div class="todo-title">${t.title}</div>
-        <div class="todo-meta">
-          <span class="badge badge-priority-${t.priority}">${t.priority}</span>
-          <span class="todo-category">${t.category}</span>
+      // Laundry summary
+      const laundryDesign = { federe: 0, lenzuola: 0, asciugamani: 0, tappeti: 0, copripiumini: 0, checkins: 0, guests: 0 };
+      const laundryBoutique = { federe: 0, lenzuola: 0, asciugamani: 0, tappeti: 0, copripiumini: 0, checkins: 0, guests: 0 };
+
+      arrivals.forEach(b => {
+        const aptName = getAptName(b.property_id);
+        const items = getLinenForBooking(aptName, b.num_guests, b.checkin_date);
+        const target = aptName === 'Design' ? laundryDesign : laundryBoutique;
+        target.federe += items.federe;
+        target.lenzuola += items.lenzuola;
+        target.asciugamani += items.asciugamani;
+        target.tappeti += items.tappeti;
+        target.copripiumini += items.copripiumini;
+        target.checkins++;
+        target.guests += (b.num_guests || 1);
+      });
+
+      // Staff payments
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthStartStr = dateStr(monthStart);
+      const { data: shifts } = await sb.from('work_shifts').select('*').gte('clock_in', monthStartStr);
+      const { data: interventions } = await sb.from('work_interventions').select('*').gte('created_at', monthStartStr);
+      const allShifts = shifts || [];
+      const allInterventions = interventions || [];
+      const weekShifts = allShifts.filter(s => s.clock_in >= monStr);
+      const weekInterventions = allInterventions.filter(i => i.created_at >= monStr);
+      const mariaWeekHrs = weekShifts.filter(s => s.worker === 'Maria').reduce((sum, s) => sum + (s.duration_minutes || 0), 0) / 60;
+      const mariaMonthHrs = allShifts.filter(s => s.worker === 'Maria').reduce((sum, s) => sum + (s.duration_minutes || 0), 0) / 60;
+      const saraWeekInt = weekInterventions.filter(i => i.worker === 'Sara').length;
+      const saraMonthInt = allInterventions.filter(i => i.worker === 'Sara').length;
+
+      // Open todos
+      const { count: openTodos } = await sb.from('staff_todos')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_completed', false).eq('is_archived', false);
+
+      container.innerHTML = `
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon arrivals">↓</div>
+            <div class="kpi-value">${arrivals.length}</div>
+            <div class="kpi-label">Arrivi</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon departures">↑</div>
+            <div class="kpi-value">${departures.length}</div>
+            <div class="kpi-label">Partenze</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon nights">☽</div>
+            <div class="kpi-value">${occupiedNights}<small>/${totalNights}</small></div>
+            <div class="kpi-label">Notti occupate</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon occupancy">%</div>
+            <div class="kpi-value">${occupancy}%</div>
+            <div class="kpi-label">Occupazione</div>
+          </div>
         </div>
-      </div>
-    </div>
-  `).join('');
-  document.getElementById('dash-todos').innerHTML = todosHTML;
-}
 
-/* ═══════════════════════════════════════════
-   TIMBRATURA
-   ═══════════════════════════════════════════ */
-
-function switchClockMode(mode) {
-  document.querySelectorAll('.clock-mode-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.clock-mode-btn[data-mode="${mode}"]`).classList.add('active');
-  document.querySelectorAll('.clock-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + mode).classList.add('active');
-}
-
-function updateClock() {
-  const now = new Date();
-  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-  const dateStr = fmtFull(now);
-
-  document.getElementById('clock-display').textContent = time;
-  document.getElementById('clock-date-display').textContent = dateStr;
-  document.getElementById('clock-display-2').textContent = time;
-  document.getElementById('clock-date-display-2').textContent = dateStr;
-
-  renderRecentMaria();
-  renderRecentSara();
-}
-
-function clockEntry() {
-  if (activeShift) return;
-  activeShift = { entry: new Date() };
-  document.getElementById('btn-entry').classList.add('btn-disabled');
-  document.getElementById('btn-exit').classList.remove('btn-disabled');
-
-  const box = document.getElementById('shift-status-box');
-  box.style.display = 'block';
-  document.getElementById('shift-start-display').textContent = 'Entrata alle ' + fmtTime(activeShift.entry);
-
-  showToast('Entrata registrata — ' + fmtTime(activeShift.entry));
-}
-
-function clockExit() {
-  if (!activeShift) return;
-  const exitTime = new Date();
-  activeShift.exit = exitTime;
-  mariaShifts.push({ ...activeShift });
-
-  const hrs = ((exitTime - activeShift.entry) / 3600000).toFixed(1);
-  showToast('Uscita registrata — ' + hrs + 'h · €' + Math.round(hrs * 15));
-
-  activeShift = null;
-  document.getElementById('btn-entry').classList.remove('btn-disabled');
-  document.getElementById('btn-exit').classList.add('btn-disabled');
-  document.getElementById('shift-status-box').style.display = 'none';
-
-  renderRecentMaria();
-}
-
-function registerIntervention() {
-  const note = document.getElementById('intervention-note').value.trim() || 'Intervento generico';
-  saraInterventions.push({ date: new Date(), note: note });
-  document.getElementById('intervention-note').value = '';
-  showToast('Intervento registrato — €10');
-  renderRecentSara();
-}
-
-function renderRecentMaria() {
-  const recent = [...mariaShifts].filter(s => s.exit).sort((a,b) => b.entry - a.entry).slice(0, 4);
-  const html = recent.map(s => {
-    const hrs = ((s.exit - s.entry) / 3600000).toFixed(1);
-    return `
-      <div class="history-item">
-        <div class="history-dot maria"></div>
-        <div class="history-info">
-          <div class="history-title">${hrs}h di pulizie</div>
-          <div class="history-meta">${fmtFull(s.entry)} · ${fmtTime(s.entry)}–${fmtTime(s.exit)}</div>
+        <div class="card card-expandable" id="card-arrivals">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">📥</span> Prossimi arrivi</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="card-badge" style="background:var(--success)">${arrivals.length}</span>
+              <span class="card-expand-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-expand-content">
+            ${arrivals.length === 0 ? '<div class="empty-state"><div class="empty-text">Nessun arrivo questa settimana</div></div>' :
+              arrivals.map(b => `
+                <div class="guest-item">
+                  <div>
+                    <div class="guest-name">${b.guest_name || 'Ospite'}</div>
+                    <div class="guest-meta">${formatDate(b.checkin_date)} · ${b.num_guests || 1} ospiti</div>
+                  </div>
+                  <span class="apt-badge ${getAptName(b.property_id).toLowerCase()}">${getAptName(b.property_id)}</span>
+                </div>`).join('')}
+          </div>
         </div>
-        <div class="history-amount">€${Math.round(hrs * 15)}</div>
-      </div>
-    `;
-  }).join('');
-  document.getElementById('recent-maria-shifts').innerHTML = html;
-}
 
-function renderRecentSara() {
-  const recent = [...saraInterventions].sort((a,b) => b.date - a.date).slice(0, 4);
-  const html = recent.map(i => `
-    <div class="history-item">
-      <div class="history-dot sara"></div>
-      <div class="history-info">
-        <div class="history-title">${i.note}</div>
-        <div class="history-meta">${fmtFull(i.date)} · ${fmtTime(i.date)}</div>
-      </div>
-      <div class="history-amount">€10</div>
-    </div>
-  `).join('');
-  document.getElementById('recent-sara-interventions').innerHTML = html;
-}
+        <div class="card card-expandable" id="card-departures">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">📤</span> Prossime partenze</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="card-badge" style="background:var(--error)">${departures.length}</span>
+              <span class="card-expand-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-expand-content">
+            ${departures.length === 0 ? '<div class="empty-state"><div class="empty-text">Nessuna partenza questa settimana</div></div>' :
+              departures.map(b => `
+                <div class="guest-item">
+                  <div>
+                    <div class="guest-name">${b.guest_name || 'Ospite'}</div>
+                    <div class="guest-meta">${formatDate(b.checkout_date)} · ${b.num_guests || 1} ospiti</div>
+                  </div>
+                  <span class="apt-badge ${getAptName(b.property_id).toLowerCase()}">${getAptName(b.property_id)}</span>
+                </div>`).join('')}
+          </div>
+        </div>
 
-/* ═══════════════════════════════════════════
-   CALENDAR
-   ═══════════════════════════════════════════ */
+        ${renderLaundrySummaryCard(laundryDesign, laundryBoutique)}
 
-let calYear = 2026;
-let calMonth = 3; // April (0-based)
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">💰</span> Pagamenti staff</div>
+          </div>
+          <div class="payment-row">
+            <div>
+              <div class="fw-700">Maria</div>
+              <div class="payment-detail">Sett: ${mariaWeekHrs.toFixed(1)}h · Mese: ${mariaMonthHrs.toFixed(1)}h</div>
+            </div>
+            <div class="payment-amount">${formatEuro(mariaMonthHrs * 15)}</div>
+          </div>
+          <div class="payment-row">
+            <div>
+              <div class="fw-700">Sara</div>
+              <div class="payment-detail">Sett: ${saraWeekInt} int. · Mese: ${saraMonthInt} int.</div>
+            </div>
+            <div class="payment-amount">${formatEuro(saraMonthInt * 10)}</div>
+          </div>
+          <div class="payment-row total">
+            <span>Totale mese</span>
+            <span class="payment-amount">${formatEuro(mariaMonthHrs * 15 + saraMonthInt * 10)}</span>
+          </div>
+        </div>
 
-function changeMonth(delta) {
-  calMonth += delta;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  if (calMonth < 0) { calMonth = 11; calYear--; }
-  renderCalendar();
-}
+        <div class="card" style="cursor:pointer" id="card-todos-shortcut">
+          <div class="card-header" style="margin-bottom:0">
+            <div class="card-title"><span class="icon">📋</span> Compiti aperti</div>
+            <span class="card-badge">${openTodos || 0}</span>
+          </div>
+        </div>
+      `;
 
-function renderCalendar() {
-  document.getElementById('cal-month-title').textContent = MONTHS_IT[calMonth] + ' ' + calYear;
+      $$('.card-expandable').forEach(card => {
+        card.addEventListener('click', () => card.classList.toggle('expanded'));
+      });
 
-  const firstDay = new Date(calYear, calMonth, 1);
-  const lastDay = new Date(calYear, calMonth + 1, 0);
-  const startDow = (firstDay.getDay() + 6) % 7; // Monday=0
-  const totalDays = lastDay.getDate();
-
-  let html = DAYS_SHORT.map(d => `<div class="cal-day-name">${d}</div>`).join('');
-
-  // Empty cells before first day
-  for (let i = 0; i < startDow; i++) {
-    html += '<div class="cal-day empty"></div>';
-  }
-
-  for (let d = 1; d <= totalDays; d++) {
-    const date = new Date(calYear, calMonth, d);
-    let cls = 'cal-day';
-
-    const isToday = sameDay(date, TODAY);
-    if (isToday) cls += ' today';
-
-    let isCheckin = false, isCheckout = false, isOccupied = false;
-    bookings.forEach(b => {
-      if (sameDay(date, b.checkin)) isCheckin = true;
-      if (sameDay(date, b.checkout)) isCheckout = true;
-      if (date >= b.checkin && date < b.checkout) isOccupied = true;
-    });
-
-    if (isCheckin) cls += ' checkin';
-    else if (isCheckout) cls += ' checkout';
-    else if (isOccupied && !isToday) cls += ' occupied';
-
-    html += `<div class="${cls}">${d}</div>`;
-  }
-
-  document.getElementById('cal-grid').innerHTML = html;
-
-  // Booking list for this month
-  const monthBookings = bookings.filter(b => {
-    return (b.checkin.getMonth() === calMonth && b.checkin.getFullYear() === calYear) ||
-           (b.checkout.getMonth() === calMonth && b.checkout.getFullYear() === calYear);
-  });
-
-  const blHTML = monthBookings.map(b => {
-    const nights = Math.round((b.checkout - b.checkin) / 86400000);
-    return `
-      <div class="card">
-        <div class="booking-guest">${b.guest}</div>
-        <div class="booking-dates">${fmt(b.checkin)} → ${fmt(b.checkout)} · ${nights} notti</div>
-        <div class="booking-guests-count">${b.guests} ospiti</div>
-      </div>
-    `;
-  }).join('');
-  document.getElementById('booking-list').innerHTML = blHTML;
-}
-
-/* ═══════════════════════════════════════════
-   LAUNDRY
-   ═══════════════════════════════════════════ */
-
-function getNextLaundryChanges() {
-  const todayStart = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate());
-  const changes = [];
-
-  bookings.forEach(b => {
-    // Change needed on checkout day (prep for next guest)
-    if (b.checkout >= todayStart) {
-      const sheets = b.guests <= 2 ? 1 : 2;
-      const towels = b.guests * 2;
-      changes.push({
-        date: b.checkout,
-        guest: b.guest + ' (checkout)',
-        guestCount: b.guests,
-        sheets: sheets,
-        pillowcases: b.guests,
-        towels: towels,
-        bathMats: 1
+      $('#card-todos-shortcut')?.addEventListener('click', () => {
+        staffSubTab = 'todo';
+        chatTarget = null;
+        currentTab = 'staff';
+        $$('.tab-item').forEach(b => b.classList.toggle('active', b.dataset.tab === 'staff'));
+        navigateTo('staff');
       });
     }
-  });
 
-  changes.sort((a,b) => a.date - b.date);
-  return changes;
-}
+    function renderLaundrySummaryCard(laundryDesign, laundryBoutique) {
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">📦</span> Lavanderia settimana</div>
+          </div>
+          ${renderLaundrySummaryBlock('Design', laundryDesign, 'design')}
+          ${renderLaundrySummaryBlock('Boutique', laundryBoutique, 'boutique')}
+        </div>`;
+    }
 
-function renderLaundry() {
-  const changes = getNextLaundryChanges();
+    function renderLaundrySummaryBlock(name, data, cls) {
+      const items = [];
+      if (data.federe > 0) items.push({ label: 'Federe', val: data.federe });
+      if (data.lenzuola > 0) items.push({ label: 'Lenzuola', val: data.lenzuola });
+      if (data.asciugamani > 0) items.push({ label: 'Asciugamani', val: data.asciugamani });
+      if (data.tappeti > 0) items.push({ label: 'Tappeti', val: data.tappeti });
+      if (data.copripiumini > 0) items.push({ label: 'Copripiumini', val: data.copripiumini });
 
-  // Next changes
-  const changesHTML = changes.slice(0, 5).map(c => `
-    <div class="laundry-change-card">
-      <div class="laundry-change-date">${fmtFull(c.date)}</div>
-      <div class="laundry-change-guest">${c.guest}</div>
-      <div class="laundry-change-detail">${c.guestCount} ospiti · ${c.sheets} set lenzuola · ${c.pillowcases} federe · ${c.towels} asciugamani · ${c.bathMats} tappetino</div>
-    </div>
-  `).join('');
-  document.getElementById('laundry-changes').innerHTML = changesHTML || '<div style="padding:16px;color:var(--text-faint);">Nessun cambio previsto</div>';
+      if (items.length === 0) {
+        return `<div class="laundry-apt-block">
+          <div class="laundry-apt-header">
+            <span class="apt-badge ${cls}">${name}</span>
+            <span class="laundry-apt-meta">(0 check-in)</span>
+          </div>
+        </div>`;
+      }
 
-  // Weekly summary
-  const weekEnd = new Date(TODAY.getTime() + 7 * 86400000);
-  const weekChanges = changes.filter(c => c.date < weekEnd);
+      return `
+        <div class="laundry-apt-block">
+          <div class="laundry-apt-header">
+            <span class="apt-badge ${cls}">${name}</span>
+            <span class="laundry-apt-meta">(${data.checkins} check-in, ${data.guests} ospiti)</span>
+          </div>
+          <div class="laundry-items">
+            ${items.map(i => `<div class="laundry-item"><span class="laundry-item-label">${i.label}</span><span class="laundry-item-value">${i.val}</span></div>`).join('')}
+          </div>
+        </div>`;
+    }
 
-  let totSheets = 0, totPillows = 0, totTowels = 0, totMats = 0;
-  weekChanges.forEach(c => {
-    totSheets += c.sheets;
-    totPillows += c.pillowcases;
-    totTowels += c.towels;
-    totMats += c.bathMats;
-  });
+    // ============================================================
+    // LAVANDERIA (ADMIN)
+    // ============================================================
+    async function renderLavanderia(container) {
+      await getProperties();
+      const now = new Date();
+      const monday = getMonday(now);
+      const sunday = getSunday(now);
+      const monStr = dateStr(monday);
+      const sunStr = dateStr(sunday);
 
-  const summaryHTML = `
-    <div class="laundry-row"><span class="laundry-item-name">Set lenzuola</span><span class="laundry-item-qty">${totSheets}</span></div>
-    <div class="laundry-row"><span class="laundry-item-name">Federe</span><span class="laundry-item-qty">${totPillows}</span></div>
-    <div class="laundry-row"><span class="laundry-item-name">Asciugamani</span><span class="laundry-item-qty">${totTowels}</span></div>
-    <div class="laundry-row"><span class="laundry-item-name">Tappetini bagno</span><span class="laundry-item-qty">${totMats}</span></div>
-  `;
-  document.getElementById('laundry-summary').innerHTML = summaryHTML;
+      const { data: rawBookings } = await sb.from('bookings').select('*')
+        .gte('checkin_date', monStr).lte('checkin_date', sunStr).order('checkin_date');
 
-  // Copy text
-  const todayStr = fmt(TODAY);
-  const weekEndStr = fmt(weekEnd);
-  let text = `Buongiorno,\n\nRiepilogo biancheria per Roma Segreta\nPeriodo: ${todayStr} — ${weekEndStr}\n\n`;
-  if (weekChanges.length === 0) {
-    text += 'Nessun cambio previsto questa settimana.\n';
-  } else {
-    text += `Totale settimana:\n• ${totSheets} set lenzuola matrimoniali\n• ${totPillows} federe\n• ${totTowels} asciugamani (viso + doccia)\n• ${totMats} tappetini bagno\n\nDettaglio cambi:\n`;
-    weekChanges.forEach(c => {
-      text += `— ${fmtFull(c.date)}: ${c.guest} (${c.guestCount} ospiti)\n`;
-    });
-  }
-  text += '\nGrazie,\nAndrea — Roma Segreta';
+      const arrivals = dedup(rawBookings);
 
-  const copyBox = document.getElementById('laundry-text');
-  copyBox.innerHTML = `<button class="copy-btn" onclick="copyLaundryText()">Copia</button>` + text;
-}
+      if (arrivals.length === 0) {
+        container.innerHTML = `
+          <div class="page-title">Lavanderia</div>
+          <div class="empty-state">
+            <div class="empty-icon">🧺</div>
+            <div class="empty-text">Nessun check-in questa settimana.<br>Verifica la sincronizzazione Lodgify.</div>
+          </div>`;
+        return;
+      }
 
-function copyLaundryText() {
-  const box = document.getElementById('laundry-text');
-  const text = box.textContent.replace('Copia', '').trim();
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Testo copiato');
-  }).catch(() => {
-    // Fallback selection
-    const range = document.createRange();
-    range.selectNodeContents(box);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    showToast('Selezionato — copia manualmente');
-  });
-}
+      const rows = arrivals.map((b, i) => {
+        const apt = getAptName(b.property_id);
+        const items = getLinenForBooking(apt, b.num_guests, b.checkin_date);
+        return { ...b, apt, items, idx: i + 1 };
+      });
 
-/* ═══════════════════════════════════════════
-   TO-DO
-   ═══════════════════════════════════════════ */
+      const totDesign = { federe: 0, lenzuola: 0, asciugamani: 0, tappeti: 0, copripiumini: 0 };
+      const totBoutique = { federe: 0, lenzuola: 0, asciugamani: 0, tappeti: 0, copripiumini: 0 };
+      rows.forEach(r => {
+        const t = r.apt === 'Design' ? totDesign : totBoutique;
+        Object.keys(r.items).forEach(k => { t[k] += r.items[k]; });
+      });
+      const totAll = {};
+      Object.keys(totDesign).forEach(k => { totAll[k] = totDesign[k] + totBoutique[k]; });
 
-function renderTodos() {
-  const filtered = currentFilter === 'tutti'
-    ? todos
-    : todos.filter(t => t.category === currentFilter);
+      // Upsert weekly order
+      let order = null;
+      const { data: existingOrder } = await sb.from('laundry_orders').select('*').eq('week_start', monStr).maybeSingle();
 
-  // Sort: undone first, then by priority
-  const sorted = [...filtered].sort((a,b) => {
-    if (a.done !== b.done) return a.done ? 1 : -1;
-    const p = {alta:0, media:1, bassa:2};
-    return p[a.priority] - p[b.priority];
-  });
+      const totalCostCalc = totAll.lenzuola * PRICES.lenzuola + totAll.federe * PRICES.federe + totAll.asciugamani * PRICES.asciugamani + totAll.tappeti * PRICES.tappeti + totAll.copripiumini * PRICES.copripiumini;
 
-  const html = sorted.map(t => `
-    <div class="todo-item ${t.done ? 'completed' : ''}">
-      <div class="todo-check ${t.done ? 'checked' : ''}" onclick="toggleTodo(${t.id})">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <div class="todo-content">
-        <div class="todo-title">${t.title}</div>
-        <div class="todo-meta">
-          <span class="badge badge-priority-${t.priority}">${t.priority}</span>
-          <span class="todo-category">${t.category}</span>
-          <span class="todo-reporter">${t.reporter} · ${fmt(t.date)}</span>
+      if (existingOrder) {
+        order = existingOrder;
+        await sb.from('laundry_orders').update({
+          items_design: totDesign, items_boutique: totBoutique,
+          items_total: totAll, total_cost: totalCostCalc
+        }).eq('id', order.id);
+        order.total_cost = totalCostCalc;
+      } else {
+        const { data: newOrder } = await sb.from('laundry_orders').insert({
+          week_start: monStr, week_end: sunStr,
+          items_design: totDesign, items_boutique: totBoutique,
+          items_total: totAll, total_cost: totalCostCalc
+        }).select('*').single();
+        order = newOrder;
+      }
+
+      const orderNum = order ? String(order.serial_number).padStart(4, '0') : '????';
+      const totalCost = order?.total_cost || totalCostCalc;
+
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const { data: monthOrders } = await sb.from('laundry_orders').select('total_cost').gte('week_start', dateStr(monthStart));
+      const monthCost = (monthOrders || []).reduce((s, o) => s + Number(o.total_cost || 0), 0);
+
+      const { data: history } = await sb.from('laundry_orders').select('*').order('week_start', { ascending: false }).limit(20);
+
+      const weekLabel = getWeekLabel(monday, sunday);
+      const monthName = now.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+
+      // Build order text (visible box)
+      const orderTextLines = [`ORDINE BIANCHERIA ORD-${orderNum}`, `Settimana ${weekLabel}`, ''];
+
+      function addAptLines(aptName, tot) {
+        const lines = [];
+        if (tot.lenzuola > 0) lines.push(`  ${tot.lenzuola} lenzuola matrimoniali`);
+        if (tot.federe > 0) lines.push(`  ${tot.federe} federe`);
+        if (tot.asciugamani > 0) lines.push(`  ${tot.asciugamani} set asciugamani`);
+        if (tot.tappeti > 0) lines.push(`  ${tot.tappeti} tappeti doccia`);
+        if (tot.copripiumini > 0) lines.push(`  ${tot.copripiumini} copripiumini`);
+        if (lines.length > 0) {
+          orderTextLines.push(`🏠 ${aptName.toUpperCase()}:`);
+          lines.forEach(l => orderTextLines.push(l));
+          orderTextLines.push('');
+        }
+      }
+      addAptLines('Design', totDesign);
+      addAptLines('Boutique', totBoutique);
+      orderTextLines.push(`COSTO STIMATO: ${formatEuro(totalCost)}`);
+      const orderText = orderTextLines.join('\n');
+
+      // Build table rows, hiding zero-qty columns
+      const allKeys = ['federe', 'lenzuola', 'asciugamani', 'tappeti', 'copripiumini'];
+      const keyLabels = { federe: 'Federe', lenzuola: 'Lenzuola', asciugamani: 'Asciug.', tappeti: 'Tappeti', copripiumini: 'Coprip.' };
+      const activeKeys = allKeys.filter(k => totAll[k] > 0);
+
+      container.innerHTML = `
+        <div class="page-title">Lavanderia</div>
+
+        <div class="section-title">Riepilogo settimana</div>
+        <div class="card">
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th><th>Ospite</th><th>Arrivo</th><th>Ospiti</th><th>Appart.</th>
+                  ${activeKeys.map(k => `<th class="text-center">${keyLabels[k]}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(r => `
+                  <tr>
+                    <td>${r.idx}</td>
+                    <td>${r.guest_name || 'Ospite'}</td>
+                    <td>${formatDate(r.checkin_date)}</td>
+                    <td class="text-center">${r.num_guests || 1}</td>
+                    <td><span class="apt-badge ${r.apt.toLowerCase()}">${r.apt}</span></td>
+                    ${activeKeys.map(k => `<td class="text-center">${r.items[k]}</td>`).join('')}
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </div>
-  `).join('');
 
-  document.getElementById('todo-list').innerHTML = html;
+        <div class="section-title">Ordine settimanale</div>
+        <div class="card">
+          <div class="order-header">
+            <div class="order-number">ORD-${orderNum}</div>
+            <div class="order-week">Settimana ${weekLabel}</div>
+          </div>
+          <table class="data-table" style="min-width:auto;">
+            <thead><tr><th>Articolo</th><th class="text-center">Qtà</th><th class="text-right">Prezzo unit.</th><th class="text-right">Totale</th></tr></thead>
+            <tbody>
+              ${totAll.lenzuola > 0 ? `<tr><td>Lenzuola matrimoniali</td><td class="text-center">${totAll.lenzuola}</td><td class="text-right">${formatEuro(PRICES.lenzuola)}</td><td class="text-right">${formatEuro(totAll.lenzuola * PRICES.lenzuola)}</td></tr>` : ''}
+              ${totAll.federe > 0 ? `<tr><td>Federe</td><td class="text-center">${totAll.federe}</td><td class="text-right">${formatEuro(PRICES.federe)}</td><td class="text-right">${formatEuro(totAll.federe * PRICES.federe)}</td></tr>` : ''}
+              ${totAll.asciugamani > 0 ? `<tr><td>Set asciugamani</td><td class="text-center">${totAll.asciugamani}</td><td class="text-right">${formatEuro(PRICES.asciugamani)}</td><td class="text-right">${formatEuro(totAll.asciugamani * PRICES.asciugamani)}</td></tr>` : ''}
+              ${totAll.tappeti > 0 ? `<tr><td>Tappeti doccia</td><td class="text-center">${totAll.tappeti}</td><td class="text-right">${formatEuro(PRICES.tappeti)}</td><td class="text-right">${formatEuro(totAll.tappeti * PRICES.tappeti)}</td></tr>` : ''}
+              ${totAll.copripiumini > 0 ? `<tr><td>Copripiumini</td><td class="text-center">${totAll.copripiumini}</td><td class="text-right">${formatEuro(PRICES.copripiumini)}</td><td class="text-right">${formatEuro(totAll.copripiumini * PRICES.copripiumini)}</td></tr>` : ''}
+            </tbody>
+          </table>
+          <div class="order-total-row">
+            <span class="order-total-label">TOTALE</span>
+            <span class="order-total-value">${formatEuro(totalCost)}</span>
+          </div>
+          <div class="month-cost-block">
+            <div class="month-cost-label">Spesa mese corrente</div>
+            <div class="month-cost-sub">(${monthName})</div>
+            <div class="month-cost-value">${formatEuro(monthCost)}</div>
+          </div>
+          <div class="order-text-block" id="order-text">${orderText}</div>
+          <button class="btn-copy" id="btn-copy-order">📋 Copia ordine</button>
+        </div>
 
-  // Update badge
-  const openCount = todos.filter(t => !t.done).length;
-  const tabBadge = document.getElementById('tab-todo-badge');
-  tabBadge.textContent = openCount;
-  tabBadge.style.display = openCount > 0 ? 'flex' : 'none';
-}
+        <div class="section-title">Storico ordini</div>
+        ${!history || history.length === 0 ? '<div class="empty-state"><div class="empty-text">Nessun ordine salvato.</div></div>' :
+          history.map(h => {
+            const t = h.items_total || {};
+            const pieces = (t.federe||0) + (t.lenzuola||0) + (t.asciugamani||0) + (t.tappeti||0) + (t.copripiumini||0);
+            return `<div class="history-item">
+              <div><div class="history-id">ORD-${String(h.serial_number).padStart(4,'0')}</div><div class="history-dates">${formatDate(h.week_start)} – ${formatDate(h.week_end)}</div></div>
+              <div style="text-align:right"><div class="history-cost">${formatEuro(h.total_cost)}</div><div class="history-pieces">${pieces} pz</div></div>
+            </div>`;
+          }).join('')}
+      `;
 
-function toggleTodo(id) {
-  const t = todos.find(x => x.id === id);
-  if (t) {
-    t.done = !t.done;
-    renderTodos();
-    showToast(t.done ? 'Completato' : 'Riaperto');
-  }
-}
+      $('#btn-copy-order')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const text = $('#order-text').textContent;
+        navigator.clipboard.writeText(text).then(() => toast('Ordine copiato!', 'success')).catch(() => toast('Errore copia', 'error'));
+      });
+    }
 
-function filterTodos(filter) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector(`.filter-chip[data-filter="${filter}"]`).classList.add('active');
-  renderTodos();
-}
+    // ============================================================
+    // STAFF PAGE (ADMIN) — sub-tabs: Chat private, Cassa, To-do
+    // ============================================================
+    async function renderStaffPage(container) {
+      container.innerHTML = `
+        <div class="page-title">Staff</div>
+        <div class="staff-tabs">
+          <button class="staff-tab ${staffSubTab === 'chat' ? 'active' : ''}" data-sub="chat">💬 Chat private</button>
+          <button class="staff-tab ${staffSubTab === 'cassa' ? 'active' : ''}" data-sub="cassa">💶 Cassa</button>
+          <button class="staff-tab ${staffSubTab === 'todo' ? 'active' : ''}" data-sub="todo">📋 To-do</button>
+        </div>
+        <div id="staff-sub-content"></div>
+      `;
 
-function toggleAddTodo() {
-  const form = document.getElementById('add-todo-form');
-  form.classList.toggle('visible');
-}
+      $$('.staff-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          staffSubTab = btn.dataset.sub;
+          $$('.staff-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderStaffSubContent();
+        });
+      });
 
-function addNewTodo() {
-  const title = document.getElementById('todo-new-title').value.trim();
-  if (!title) { showToast('Inserisci un titolo'); return; }
+      await renderStaffSubContent();
+    }
 
-  const cat = document.getElementById('todo-new-category').value;
-  const pri = document.getElementById('todo-new-priority').value;
-  const reporter = document.getElementById('todo-new-reporter').value.trim() || 'Andrea';
+    async function renderStaffSubContent() {
+      const sub = $('#staff-sub-content');
+      if (!sub) return;
+      sub.innerHTML = '<div class="loading">Caricamento...</div>';
+      try {
+        switch (staffSubTab) {
+          case 'chat': await renderStaffChatList(sub); break;
+          case 'cassa': await renderCassa(sub); break;
+          case 'todo': await renderTodos(sub); break;
+        }
+      } catch (err) {
+        console.error('Staff sub error:', err);
+        sub.innerHTML = '<div class="empty-state"><div class="empty-text">Errore</div></div>';
+      }
+    }
 
-  todos.push({
-    id: todoIdCounter++,
-    title: title,
-    category: cat,
-    priority: pri,
-    done: false,
-    date: new Date(),
-    reporter: reporter
-  });
+    // --- Staff Chat List ---
+    async function renderStaffChatList(container) {
+      const staffKeys = ['maria', 'sara'];
+      const staffData = [];
+      for (const key of staffKeys) {
+        const info = STAFF_MAP[key];
+        const { data: lastMsg } = await sb.from('staff_messages').select('message, created_at')
+          .eq('conversation', info.conversation).order('created_at', { ascending: false }).limit(1);
+        const { count: unread } = await sb.from('staff_messages')
+          .select('id', { count: 'exact', head: true })
+          .eq('conversation', info.conversation).eq('is_read', false).neq('sender', 'andrea');
+        staffData.push({
+          key, info,
+          lastMessage: lastMsg?.[0]?.message || '',
+          lastTime: lastMsg?.[0]?.created_at || '',
+          unread: unread || 0
+        });
+      }
 
-  document.getElementById('todo-new-title').value = '';
-  document.getElementById('todo-new-reporter').value = '';
-  document.getElementById('add-todo-form').classList.remove('visible');
-  renderTodos();
-  showToast('To-do aggiunto');
-}
+      container.innerHTML = staffData.map(s => `
+        <div class="staff-card" data-staff="${s.key}">
+          <div class="staff-avatar ${s.key}">${s.info.name.charAt(0)}</div>
+          <div class="staff-info">
+            <div class="staff-name">${s.info.name}</div>
+            <div class="staff-role">${s.info.role}</div>
+            ${s.lastMessage ? `<div class="staff-last-msg">${s.lastMessage}</div>` : ''}
+          </div>
+          <div class="staff-card-right">
+            ${s.lastTime ? `<div class="staff-card-time">${formatTime(s.lastTime)}</div>` : ''}
+            ${s.unread > 0 ? `<span class="card-badge">${s.unread}</span>` : ''}
+            <span class="staff-card-chevron">›</span>
+          </div>
+        </div>
+      `).join('');
 
-/* ═══════════════════════════════════════════
-   UTILITY
-   ═══════════════════════════════════════════ */
+      $$('.staff-card').forEach(card => {
+        card.addEventListener('click', () => {
+          chatTarget = card.dataset.staff;
+          navigateTo('staff');
+        });
+      });
+    }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
+    // --- Private Chat (Admin → Staff) ---
+    async function renderPrivateChat(container) {
+      const info = STAFF_MAP[chatTarget];
+      if (!info) { chatTarget = null; navigateTo('staff'); return; }
 
-// Clock ticker
-setInterval(() => {
-  if (document.getElementById('page-timbratura').classList.contains('active')) {
-    updateClock();
-  }
-}, 1000);
+      await sb.from('staff_messages').update({ is_read: true })
+        .eq('conversation', info.conversation).eq('is_read', false).neq('sender', 'andrea');
 
-// Init
-renderDashboard();
-updateClock();
-</script>
+      const { data: messages } = await sb.from('staff_messages').select('*')
+        .eq('conversation', info.conversation).order('created_at', { ascending: true }).limit(200);
+
+      const msgs = messages || [];
+
+      container.innerHTML = `
+        <div class="chat-container">
+          <div class="chat-header">
+            <button class="chat-back-btn" id="chat-back">‹</button>
+            <div class="staff-avatar ${chatTarget} sm">${info.name.charAt(0)}</div>
+            <div>
+              <div class="fw-700">${info.name}</div>
+              <div style="font-size:12px;color:var(--text-secondary)">${info.role}</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            ${msgs.length === 0 ? '<div class="chat-empty">Nessun messaggio. Inizia la conversazione.</div>' :
+              msgs.map(m => renderChatBubble(m, 'admin')).join('')}
+          </div>
+          <div class="chat-input-bar">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Scrivi un messaggio..." autocomplete="off">
+            <button class="chat-send-btn" id="chat-send">➤</button>
+          </div>
+        </div>
+      `;
+
+      const msgContainer = $('#chat-messages');
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+
+      $('#chat-back').addEventListener('click', () => { chatTarget = null; navigateTo('staff'); });
+
+      const sendMsg = async () => {
+        const input = $('#chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        const isTask = text.toUpperCase().startsWith('COMPITO:');
+        await sb.from('staff_messages').insert({
+          conversation: info.conversation, sender: 'andrea',
+          message: text, is_task: isTask, is_read: false
+        });
+        await renderPrivateChat(container);
+      };
+
+      $('#chat-send').addEventListener('click', sendMsg);
+      $('#chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+
+      // Task completion
+      $$('[data-task-id]').forEach(el => {
+        el.addEventListener('click', async () => {
+          await sb.from('staff_messages').update({
+            task_completed: true, task_completed_at: new Date().toISOString()
+          }).eq('id', el.dataset.taskId);
+          toast('Compito completato!', 'success');
+          await renderPrivateChat(container);
+        });
+      });
+    }
+
+    function renderChatBubble(msg, viewerRole) {
+      const isSent = (viewerRole === 'admin' && msg.sender === 'andrea') ||
+                     (viewerRole !== 'admin' && msg.sender !== 'andrea');
+      const cls = isSent ? 'sent' : 'received';
+
+      if (msg.is_task) {
+        const done = msg.task_completed;
+        return `
+          <div class="chat-bubble task ${done ? 'completed' : ''}" ${isSent ? 'style="align-self:flex-end"' : ''}>
+            <span class="task-prefix">📋 Compito</span>
+            ${msg.message.replace(/^COMPITO:\s*/i, '')}
+            <div class="task-check ${done ? 'done' : ''}" data-task-id="${msg.id}">
+              ${done ? '☑ Completato' : '☐ Da fare'}
+            </div>
+            <div class="chat-time">${formatTime(msg.created_at)}</div>
+          </div>`;
+      }
+
+      return `
+        <div class="chat-bubble ${cls}">
+          ${msg.message}
+          <div class="chat-time">${formatTime(msg.created_at)}</div>
+        </div>`;
+    }
+
+    // --- Cassa (Tassa di soggiorno) ---
+    async function renderCassa(container) {
+      await getProperties();
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthStartStr = dateStr(monthStart);
+
+      const { data: cashData } = await sb.from('staff_cash').select('*')
+        .gte('collected_at', monthStartStr).order('collected_at', { ascending: false });
+
+      const items = cashData || [];
+      const totalMonth = items.reduce((s, c) => s + Number(c.amount || 0), 0);
+      const monthName = now.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+
+      container.innerHTML = `
+        <div class="cash-total">
+          <div>
+            <div style="font-size:12px;color:var(--text-secondary)">Tassa di soggiorno — ${monthName}</div>
+            <div>Totale incassato</div>
+          </div>
+          <div class="cash-amount">${formatEuro(totalMonth)}</div>
+        </div>
+
+        ${items.length === 0 ? '<div class="empty-state"><div class="empty-icon">💶</div><div class="empty-text">Nessun incasso registrato questo mese</div></div>' :
+          items.map(c => `
+            <div class="cash-item">
+              <div>
+                <div class="fw-700">${c.guest_name}</div>
+                <div class="cash-detail">${formatDateTime(c.collected_at)} · ${c.collected_by || '-'}</div>
+                ${c.notes ? `<div class="cash-detail">${c.notes}</div>` : ''}
+              </div>
+              <div class="cash-amount">${formatEuro(c.amount)}</div>
+            </div>
+          `).join('')}
+
+        <button class="btn-primary mt-16" id="btn-add-cash">+ Registra incasso</button>
+      `;
+
+      $('#btn-add-cash')?.addEventListener('click', () => showAddCashModal(container));
+    }
+
+    function showAddCashModal(parentContainer) {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.innerHTML = `
+        <div class="modal-card">
+          <div class="modal-title">Registra incasso tassa di soggiorno</div>
+          <div class="form-group">
+            <label class="form-label">Nome ospite</label>
+            <input type="text" class="form-input" id="cash-guest" placeholder="Nome ospite">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Importo (€)</label>
+            <input type="number" class="form-input" id="cash-amount" step="0.01" placeholder="0,00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Raccolto da</label>
+            <select class="form-input" id="cash-collector" style="height:48px;">
+              <option value="andrea">Andrea</option>
+              <option value="maria">Maria</option>
+              <option value="sara">Sara</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Note (opzionale)</label>
+            <input type="text" class="form-input" id="cash-notes" placeholder="Note...">
+          </div>
+          <button class="btn-primary" id="btn-save-cash">Salva</button>
+          <button class="btn-secondary mt-8" id="btn-cancel-cash">Annulla</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+      $('#btn-cancel-cash').addEventListener('click', () => overlay.remove());
+      $('#btn-save-cash').addEventListener('click', async () => {
+        const guest = $('#cash-guest').value.trim();
+        const amount = parseFloat($('#cash-amount').value);
+        const collector = $('#cash-collector').value;
+        const notes = $('#cash-notes').value.trim();
+        if (!guest || !amount) { toast('Compila tutti i campi obbligatori', 'error'); return; }
+        await sb.from('staff_cash').insert({
+          guest_name: guest, amount, collected_by: collector, notes: notes || null
+        });
+        overlay.remove();
+        toast('Incasso registrato!', 'success');
+        await renderStaffSubContent();
+      });
+    }
+
+    // --- To-do List ---
+    async function renderTodos(container) {
+      const { data: todos } = await sb.from('staff_todos').select('*')
+        .eq('is_archived', false).order('is_completed', { ascending: true }).order('created_at', { ascending: false });
+
+      const items = todos || [];
+      const pending = items.filter(t => !t.is_completed);
+      const completed = items.filter(t => t.is_completed);
+
+      container.innerHTML = `
+        ${pending.length === 0 && completed.length === 0 ? '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nessun compito. Aggiungine uno!</div></div>' : ''}
+
+        ${pending.length > 0 ? pending.map(t => renderTodoItem(t)).join('') : ''}
+
+        ${completed.length > 0 ? `
+          <div class="section-title" style="margin-top:16px;font-size:14px;color:var(--text-muted)">Completati</div>
+          ${completed.map(t => renderTodoItem(t)).join('')}
+        ` : ''}
+
+        <button class="btn-primary mt-16" id="btn-add-todo">+ Nuovo compito</button>
+      `;
+
+      // Bind checkboxes
+      $$('.todo-checkbox').forEach(el => {
+        el.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = el.dataset.id;
+          const isCompleted = el.classList.contains('checked');
+          await sb.from('staff_todos').update({
+            is_completed: !isCompleted,
+            completed_at: !isCompleted ? new Date().toISOString() : null
+          }).eq('id', id);
+          await renderStaffSubContent();
+        });
+      });
+
+      // Bind swipe-to-archive
+      $$('.todo-item').forEach(item => {
+        let startX = 0;
+        let currentX = 0;
+        const content = item.querySelector('.todo-item-content');
+
+        item.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        item.addEventListener('touchmove', (e) => {
+          currentX = e.touches[0].clientX;
+          const diff = startX - currentX;
+          if (diff > 20) {
+            content.style.transform = `translateX(${Math.max(-80, -diff)}px)`;
+          }
+        }, { passive: true });
+
+        item.addEventListener('touchend', () => {
+          const diff = startX - currentX;
+          if (diff > 60) {
+            item.classList.add('swiped');
+          } else {
+            content.style.transform = '';
+          }
+        });
+      });
+
+      // Bind archive buttons
+      $$('.todo-item-archive').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await sb.from('staff_todos').update({
+            is_archived: true, archived_at: new Date().toISOString()
+          }).eq('id', btn.dataset.id);
+          toast('Archiviato', 'success');
+          await renderStaffSubContent();
+        });
+      });
+
+      // Add new
+      $('#btn-add-todo')?.addEventListener('click', () => showAddTodoModal(container));
+    }
+
+    function renderTodoItem(t) {
+      const assignedLabel = t.assigned_to ? STAFF_MAP[t.assigned_to]?.name || t.assigned_to : 'Tutti';
+      return `
+        <div class="todo-item" data-id="${t.id}">
+          <div class="todo-item-archive" data-id="${t.id}">Archivia</div>
+          <div class="todo-item-content">
+            <div class="todo-checkbox ${t.is_completed ? 'checked' : ''}" data-id="${t.id}">${t.is_completed ? '✓' : ''}</div>
+            <div>
+              <div class="todo-text ${t.is_completed ? 'completed' : ''}">${t.title}</div>
+              <div class="todo-assigned">→ ${assignedLabel}</div>
+              ${t.due_date ? `<div class="todo-due">Scade: ${formatDate(t.due_date)}</div>` : ''}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function showAddTodoModal(parentContainer) {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.innerHTML = `
+        <div class="modal-card">
+          <div class="modal-title">Nuovo compito</div>
+          <div class="form-group">
+            <label class="form-label">Compito</label>
+            <input type="text" class="form-input" id="todo-title" placeholder="Cosa fare...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assegna a</label>
+            <select class="form-input" id="todo-assign" style="height:48px;">
+              <option value="">Tutti</option>
+              <option value="maria">Maria</option>
+              <option value="sara">Sara</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Scadenza (opzionale)</label>
+            <input type="date" class="form-input" id="todo-due" style="height:48px;">
+          </div>
+          <button class="btn-primary" id="btn-save-todo">Salva</button>
+          <button class="btn-secondary mt-8" id="btn-cancel-todo">Annulla</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+      $('#btn-cancel-todo').addEventListener('click', () => overlay.remove());
+      $('#btn-save-todo').addEventListener('click', async () => {
+        const title = $('#todo-title').value.trim();
+        if (!title) { toast('Inserisci il compito', 'error'); return; }
+        const assignedTo = $('#todo-assign').value || null;
+        const dueDate = $('#todo-due').value || null;
+        await sb.from('staff_todos').insert({
+          title, assigned_to: assignedTo, due_date: dueDate, created_by: 'andrea'
+        });
+        overlay.remove();
+        toast('Compito aggiunto!', 'success');
+        await renderStaffSubContent();
+      });
+    }
+
+    // ============================================================
+    // GROUP CHAT (ADMIN)
+    // ============================================================
+    async function renderGroupChat(container) {
+      const { data: messages } = await sb.from('chat_messages').select('*')
+        .order('created_at', { ascending: true }).limit(200);
+
+      const msgs = messages || [];
+
+      container.innerHTML = `
+        <div class="chat-container">
+          <div class="chat-header" style="border-bottom:1px solid var(--border);padding:12px 0;margin-bottom:0;">
+            <div style="font-size:18px">💬</div>
+            <div>
+              <div class="fw-700">Chat di gruppo</div>
+              <div style="font-size:12px;color:var(--text-secondary)">Andrea, Maria, Sara</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="group-chat-messages">
+            ${msgs.length === 0 ? '<div class="chat-empty">Nessun messaggio. Inizia la conversazione.</div>' :
+              msgs.map(m => renderGroupBubble(m, 'andrea')).join('')}
+          </div>
+          <div class="chat-input-bar">
+            <input type="text" class="chat-input" id="group-chat-input" placeholder="Scrivi al gruppo..." autocomplete="off">
+            <button class="chat-send-btn" id="group-chat-send">➤</button>
+          </div>
+        </div>
+      `;
+
+      const msgContainer = $('#group-chat-messages');
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+
+      const sendMsg = async () => {
+        const input = $('#group-chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        await sb.from('chat_messages').insert({
+          sender: 'andrea', sender_name: 'Andrea', message: text
+        });
+        await renderGroupChat(container);
+      };
+
+      $('#group-chat-send').addEventListener('click', sendMsg);
+      $('#group-chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+    }
+
+    function renderGroupBubble(msg, viewerRole) {
+      const isSent = msg.sender === viewerRole;
+      const cls = isSent ? 'sent' : 'received';
+
+      if (isSent) {
+        return `
+          <div class="chat-bubble ${cls}">
+            ${msg.message}
+            <div class="chat-time">${formatTime(msg.created_at)}</div>
+          </div>`;
+      }
+
+      return `
+        <div class="chat-bubble ${cls}">
+          <div class="chat-sender-label ${msg.sender}">${msg.sender_name}</div>
+          ${msg.message}
+          <div class="chat-time">${formatTime(msg.created_at)}</div>
+        </div>`;
+    }
+
+    // ============================================================
+    // STAFF VIEW (Maria / Sara)
+    // ============================================================
+    function renderStaffShell() {
+      return `
+        <header class="app-header">
+          <div class="logo">
+            <img src="icons/icon-192.png" alt="">
+            Roma Segreta
+          </div>
+          <div class="header-actions">
+            <button class="header-btn" id="btn-staff-logout" title="Esci">🚪</button>
+          </div>
+        </header>
+        <div class="main-content" id="staff-content" style="padding-bottom:16px;"></div>
+      `;
+    }
+
+    async function bindStaffView() {
+      const container = $('#staff-content');
+      if (!container) return;
+
+      $('#btn-staff-logout')?.addEventListener('click', () => logout());
+
+      const info = STAFF_MAP[userRole];
+      if (!info) { container.innerHTML = '<div class="empty-state">Ruolo non riconosciuto</div>'; return; }
+
+      if (userRole === 'maria') {
+        await renderMariaView(container, info);
+      } else if (userRole === 'sara') {
+        await renderSaraView(container, info);
+      }
+    }
+
+    async function renderMariaView(container, info) {
+      const { data: openShift } = await sb.from('work_shifts').select('*')
+        .eq('worker', 'Maria').is('clock_out', null).order('clock_in', { ascending: false }).limit(1);
+
+      const hasOpenShift = openShift && openShift.length > 0;
+      const currentShift = hasOpenShift ? openShift[0] : null;
+
+      const { data: recentShifts } = await sb.from('work_shifts').select('*')
+        .eq('worker', 'Maria').not('clock_out', 'is', null).order('clock_in', { ascending: false }).limit(10);
+
+      // Todos assigned to maria
+      const { data: myTodos } = await sb.from('staff_todos').select('*')
+        .eq('is_archived', false).eq('is_completed', false)
+        .or('assigned_to.eq.maria,assigned_to.is.null')
+        .order('created_at', { ascending: false });
+
+      // Messages
+      const { data: messages } = await sb.from('staff_messages').select('*')
+        .eq('conversation', info.conversation).order('created_at', { ascending: true }).limit(100);
+
+      // Group chat recent
+      const { data: groupMsgs } = await sb.from('chat_messages').select('*')
+        .order('created_at', { ascending: true }).limit(50);
+
+      container.innerHTML = `
+        <div class="page-title">Ciao Maria 👋</div>
+
+        ${hasOpenShift ? `
+          <div class="card" style="background:#FFF3F3;border-color:#F5C6C6">
+            <div style="font-size:13px;color:var(--text-secondary)">Turno in corso da</div>
+            <div style="font-size:20px;font-weight:800">${formatTime(currentShift.clock_in)}</div>
+          </div>
+          <button class="clock-btn clock-out" id="btn-clock-out">🔴 USCITA</button>
+        ` : `
+          <button class="clock-btn clock-in" id="btn-clock-in">🟢 ENTRATA</button>
+        `}
+
+        ${myTodos && myTodos.length > 0 ? `
+          <div class="section-title">Da fare</div>
+          ${myTodos.map(t => `
+            <div class="card" style="border-left:3px solid var(--primary)">
+              <div style="font-size:14px">${t.title}</div>
+              <button class="btn-copy mt-8" style="font-size:12px;padding:8px 14px;" data-todo-done="${t.id}">✓ Fatto</button>
+            </div>
+          `).join('')}
+        ` : ''}
+
+        <div class="section-title">Turni recenti</div>
+        ${!recentShifts || recentShifts.length === 0 ? '<div class="empty-state"><div class="empty-text">Nessun turno registrato</div></div>' :
+          recentShifts.map(s => `
+            <div class="shift-item">
+              <div><div class="shift-time">${formatDateTime(s.clock_in)} → ${formatTime(s.clock_out)}</div></div>
+              <div style="text-align:right">
+                <div class="shift-duration">${s.duration_minutes ? Math.round(s.duration_minutes / 60 * 10) / 10 + 'h' : '-'}</div>
+                <div class="shift-amount">${s.amount ? formatEuro(s.amount) : '-'}</div>
+              </div>
+            </div>
+          `).join('')}
+
+        <div class="section-title">Messaggi con Andrea</div>
+        <div class="card" style="max-height:300px;overflow-y:auto" id="maria-chat">
+          ${!messages || messages.length === 0 ? '<div class="chat-empty" style="padding:20px">Nessun messaggio</div>' :
+            messages.map(m => renderChatBubble(m, 'maria')).join('')}
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" class="chat-input" id="staff-chat-input" placeholder="Scrivi ad Andrea..." autocomplete="off">
+          <button class="chat-send-btn" id="staff-chat-send">➤</button>
+        </div>
+
+        <div class="section-title">Chat di gruppo</div>
+        <div class="card" style="max-height:250px;overflow-y:auto" id="maria-group-chat">
+          ${!groupMsgs || groupMsgs.length === 0 ? '<div class="chat-empty" style="padding:20px">Nessun messaggio</div>' :
+            groupMsgs.map(m => renderGroupBubble(m, 'maria')).join('')}
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" class="chat-input" id="group-input" placeholder="Scrivi al gruppo..." autocomplete="off">
+          <button class="chat-send-btn" id="group-send">➤</button>
+        </div>
+      `;
+
+      // Scroll chats
+      const chatEl = $('#maria-chat');
+      if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+      const groupEl = $('#maria-group-chat');
+      if (groupEl) groupEl.scrollTop = groupEl.scrollHeight;
+
+      // Clock in
+      $('#btn-clock-in')?.addEventListener('click', async () => {
+        await sb.from('work_shifts').insert({ worker: 'Maria', clock_in: new Date().toISOString() });
+        toast('Entrata registrata!', 'success');
+        await renderMariaView(container, info);
+      });
+
+      // Clock out
+      $('#btn-clock-out')?.addEventListener('click', async () => {
+        if (!currentShift) return;
+        const now = new Date();
+        const clockIn = new Date(currentShift.clock_in);
+        const mins = Math.round((now - clockIn) / 60000);
+        const amount = (mins / 60) * 15;
+        await sb.from('work_shifts').update({
+          clock_out: now.toISOString(), duration_minutes: mins, amount: Math.round(amount * 100) / 100
+        }).eq('id', currentShift.id);
+        toast('Uscita registrata! ' + Math.round(mins / 60 * 10) / 10 + 'h', 'success');
+        await renderMariaView(container, info);
+      });
+
+      // Complete todos
+      $$('[data-todo-done]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await sb.from('staff_todos').update({
+            is_completed: true, completed_at: new Date().toISOString()
+          }).eq('id', btn.dataset.todoDone);
+          toast('Compito completato!', 'success');
+          await renderMariaView(container, info);
+        });
+      });
+
+      // Private chat send
+      const sendStaffMsg = async () => {
+        const input = $('#staff-chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        await sb.from('staff_messages').insert({
+          conversation: info.conversation, sender: 'maria', message: text, is_read: false
+        });
+        await renderMariaView(container, info);
+      };
+      $('#staff-chat-send')?.addEventListener('click', sendStaffMsg);
+      $('#staff-chat-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') sendStaffMsg(); });
+
+      // Group chat send
+      const sendGroupMsg = async () => {
+        const input = $('#group-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        await sb.from('chat_messages').insert({
+          sender: 'maria', sender_name: 'Maria', message: text
+        });
+        await renderMariaView(container, info);
+      };
+      $('#group-send')?.addEventListener('click', sendGroupMsg);
+      $('#group-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') sendGroupMsg(); });
+    }
+
+    async function renderSaraView(container, info) {
+      const { data: recentInt } = await sb.from('work_interventions').select('*')
+        .eq('worker', 'Sara').order('created_at', { ascending: false }).limit(10);
+
+      // Todos assigned to sara
+      const { data: myTodos } = await sb.from('staff_todos').select('*')
+        .eq('is_archived', false).eq('is_completed', false)
+        .or('assigned_to.eq.sara,assigned_to.is.null')
+        .order('created_at', { ascending: false });
+
+      const { data: messages } = await sb.from('staff_messages').select('*')
+        .eq('conversation', info.conversation).order('created_at', { ascending: true }).limit(100);
+
+      const { data: groupMsgs } = await sb.from('chat_messages').select('*')
+        .order('created_at', { ascending: true }).limit(50);
+
+      container.innerHTML = `
+        <div class="page-title">Ciao Sara 👋</div>
+
+        <button class="clock-btn register-intervention" id="btn-register-int">🔧 REGISTRA INTERVENTO</button>
+        <div id="int-note-wrap" class="hidden" style="margin-bottom:16px">
+          <input type="text" class="form-input" id="int-note" placeholder="Nota opzionale..." style="margin-bottom:8px">
+          <button class="btn-primary" id="btn-confirm-int">Conferma intervento</button>
+        </div>
+
+        ${myTodos && myTodos.length > 0 ? `
+          <div class="section-title">Da fare</div>
+          ${myTodos.map(t => `
+            <div class="card" style="border-left:3px solid var(--primary)">
+              <div style="font-size:14px">${t.title}</div>
+              <button class="btn-copy mt-8" style="font-size:12px;padding:8px 14px;" data-todo-done="${t.id}">✓ Fatto</button>
+            </div>
+          `).join('')}
+        ` : ''}
+
+        <div class="section-title">Interventi recenti</div>
+        ${!recentInt || recentInt.length === 0 ? '<div class="empty-state"><div class="empty-text">Nessun intervento registrato</div></div>' :
+          recentInt.map(i => `
+            <div class="intervention-item">
+              <div>
+                <div class="intervention-time">${formatDateTime(i.created_at)}</div>
+                ${i.note ? `<div style="font-size:13px;margin-top:2px">${i.note}</div>` : ''}
+              </div>
+              <div class="intervention-amount">${formatEuro(i.amount)}</div>
+            </div>
+          `).join('')}
+
+        <div class="section-title">Messaggi con Andrea</div>
+        <div class="card" style="max-height:300px;overflow-y:auto" id="sara-chat">
+          ${!messages || messages.length === 0 ? '<div class="chat-empty" style="padding:20px">Nessun messaggio</div>' :
+            messages.map(m => renderChatBubble(m, 'sara')).join('')}
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" class="chat-input" id="staff-chat-input" placeholder="Scrivi ad Andrea..." autocomplete="off">
+          <button class="chat-send-btn" id="staff-chat-send">➤</button>
+        </div>
+
+        <div class="section-title">Chat di gruppo</div>
+        <div class="card" style="max-height:250px;overflow-y:auto" id="sara-group-chat">
+          ${!groupMsgs || groupMsgs.length === 0 ? '<div class="chat-empty" style="padding:20px">Nessun messaggio</div>' :
+            groupMsgs.map(m => renderGroupBubble(m, 'sara')).join('')}
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" class="chat-input" id="group-input" placeholder="Scrivi al gruppo..." autocomplete="off">
+          <button class="chat-send-btn" id="group-send">➤</button>
+        </div>
+      `;
+
+      // Scroll chats
+      const chatEl = $('#sara-chat');
+      if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+      const groupEl = $('#sara-group-chat');
+      if (groupEl) groupEl.scrollTop = groupEl.scrollHeight;
+
+      // Register intervention
+      $('#btn-register-int').addEventListener('click', () => {
+        $('#int-note-wrap').classList.toggle('hidden');
+      });
+
+      $('#btn-confirm-int')?.addEventListener('click', async () => {
+        const note = $('#int-note')?.value.trim() || null;
+        await sb.from('work_interventions').insert({ worker: 'Sara', note, amount: 10.00 });
+        toast('Intervento registrato! €10,00', 'success');
+        await renderSaraView(container, info);
+      });
+
+      // Complete todos
+      $$('[data-todo-done]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await sb.from('staff_todos').update({
+            is_completed: true, completed_at: new Date().toISOString()
+          }).eq('id', btn.dataset.todoDone);
+          toast('Compito completato!', 'success');
+          await renderSaraView(container, info);
+        });
+      });
+
+      // Private chat
+      const sendStaffMsg = async () => {
+        const input = $('#staff-chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        await sb.from('staff_messages').insert({
+          conversation: info.conversation, sender: 'sara', message: text, is_read: false
+        });
+        await renderSaraView(container, info);
+      };
+      $('#staff-chat-send')?.addEventListener('click', sendStaffMsg);
+      $('#staff-chat-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') sendStaffMsg(); });
+
+      // Group chat
+      const sendGroupMsg = async () => {
+        const input = $('#group-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        await sb.from('chat_messages').insert({
+          sender: 'sara', sender_name: 'Sara', message: text
+        });
+        await renderSaraView(container, info);
+      };
+      $('#group-send')?.addEventListener('click', sendGroupMsg);
+      $('#group-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') sendGroupMsg(); });
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    async function init() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
+      await checkSession();
+      render();
+    }
+
+    init();
+  })();
+  </script>
 </body>
 </html>
